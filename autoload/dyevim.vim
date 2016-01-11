@@ -30,6 +30,7 @@ function! dyevim#Enable()
     call s:SetupPython()
     call s:SetupSyntaxRules()
     call s:SetupAutocommands()
+    call s:SetupWheelMappings()
     "call youcompleteme#RegisterSemanticTokensReadyPythonCallback(
     "    \ 'DyeVimSemanticTokensReady')
 endfunction
@@ -78,6 +79,35 @@ function! s:SetupSyntaxRules()
     highlight link Dye_Macro Macro
     highlight link Dye_Function Function
     highlight link Dye_FunctionParam NormalBold
+endfunction
+
+function! s:SetupWheelMappings()
+    nnoremap <silent> <ScrollWheelUp>
+                    \ <ScrollWheelUp>:call <SID>OnCursorMoved()<CR>
+    inoremap <silent> <ScrollWheelUp>
+                    \ <ScrollWheelUp><ESC>:call <SID>OnCursorMoved()<CR><INS>
+    nnoremap <silent> <ScrollWheelDown>
+                    \ <ScrollWheelDown>:call <SID>OnCursorMoved()<CR>
+    inoremap <silent> <ScrollWheelDown>
+                    \ <ScrollWheelDown><ESC>:call <SID>OnCursorMoved()<CR><INS>
+
+    nnoremap <silent> <S-ScrollWheelUp>
+                    \ <S-ScrollWheelUp>:call <SID>OnCursorMoved()<CR>
+    inoremap <silent> <S-ScrollWheelUp>
+                    \ <S-ScrollWheelUp><ESC>:call <SID>OnCursorMoved()<CR><INS>
+    nnoremap <silent> <S-ScrollWheelDown>
+                    \ <S-ScrollWheelDown>:call <SID>OnCursorMoved()<CR>
+    inoremap <silent> <S-ScrollWheelDown>
+                    \ <S-ScrollWheelDown><ESC>:call <SID>OnCursorMoved()<CR><INS>
+
+    nnoremap <silent> <C-ScrollWheelUp>
+                    \ <C-ScrollWheelUp>:call <SID>OnCursorMoved()<CR>
+    inoremap <silent> <C-ScrollWheelUp>
+                    \ <C-ScrollWheelUp><ESC>:call <SID>OnCursorMoved()<CR><INS>
+    nnoremap <silent> <C-ScrollWheelDown>
+                    \ <C-ScrollWheelDown>:call <SID>OnCursorMoved()<CR>
+    inoremap <silent> <C-ScrollWheelDown>
+                    \ <C-ScrollWheelDown><ESC>:call <SID>OnCursorMoved()<CR><INS>
 endfunction
 
 " This is basic vim plugin boilerplate
