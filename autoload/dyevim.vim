@@ -27,6 +27,10 @@ set cpo&vim
 let s:script_folder_path = escape( expand( '<sfile>:p:h' ), '\' )
 
 function! dyevim#Enable()
+    if &diff
+        return
+    endif
+
     call s:SetupPython()
     call s:SetupSyntaxRules()
     call s:SetupAutocommands()
