@@ -24,11 +24,17 @@
 
 from interval_set import IntervalSet
 
+import copy
+
 class Interval( object ):
 
     def __init__( self, b, e ):
         self._begin = b
         self._end = e
+
+
+    def __repr__(self):
+        return "<Interval: [{0}, {1}]>".format(self._begin, self._end)
 
 
     def __eq__( self, other ):
@@ -53,44 +59,73 @@ class Interval( object ):
         return l if l > 0 else 0
 
 
+    def __iter__( self ):
+        if self:
+            yield self
+
+
     def __contains__( self, other ):
         if isinstance( other, Interval ):
             return other._begin >= self._begin and other._end <= self._end
         return other >= self._begin and other <= self._end
 
 
-    def Empty( self ):
-        return self._begin > self._end
-
-
     def Overlaps( self, other ):
         return not ( self < other ) and not ( self > other )
 
 
-    def __sub__( self, other ):
-        # TODO fix this
+    def _SubtractInterval( self, other ):
         if self in other:
-            return Interval
-        b = other._begin in self
-        e = other._end in self
-        if b and e:
-            return IntervalSet( Interval( self._begin, other._begin - 1 ),
-                                Interval( other._end + 1, self._end ) )
-        elif b:
-            return Interval( self._begin, other._begin - 1 )
-        elif e:
-            return Interval( other._end + 1, self._end )
+            # return invalid interval
+            return Interval(0, -1)
+        i1 = None
+        i2 = None
+        if other._begin in self:
+            i1 = Interval(self._begin, other._begin - 1)
+        if other._end in self:
+            i2 = Interval(other._end + 1, self._end)
+
+        if i1 and i2:
+            return IntervalSet(i1, i2)
+        elif i1:
+            return i1
+        elif i2:
+            return i2
         else:
             return self
 
 
-    def __add__( self, other ):
-        pass
+    def __sub__( self, other ):
+        if isinstance( other, Interval ):
+            return self._SubtractInterval( other )
+        else:
+            result = copy.copy( self )
+            for i in other:
+                result -= i
+            return result
 
 
-    def __or__( self, other ):
-        pass
+    def _union( self, other ):
+        if ( self._end + 1 == other._begin or
+             other._end + 1 == self._begin or
+             self.Overlaps( other ) ):
+
+            new_begin = min( self._begin, other._begin )
+            new_end = max( self._end, other._end )
+            return Interval(new_begin, new_end)
+
+        return IntervalSet(self, other)
+
+
+    __add__ = __or__ = _union
 
 
     def __and__( self, other ):
-        pass
+        if self.Overlaps( other ):
+            new_begin = max( self._begin, other._begin )
+            new_end = min( self._end, other._end )
+            return Interval(new_begin, new_end)
+
+        return None
+
+

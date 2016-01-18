@@ -66,12 +66,12 @@ class Viewport(object):
         return result
 
 
-    def IsNull(self):
-        return self.begin > self.end
-
-
     def _InRange(self, value):
         return value >= self.begin and value <= self.end
+
+
+    def IsNull(self):
+        return self.begin > self.end
 
 
     def Size(self):
@@ -83,3 +83,8 @@ class Viewport(object):
         begin = int(vim.eval('line("w0")'))
         end = int(vim.eval('line("w$")'))
         return Viewport(begin, end)
+
+
+    @staticmethod
+    def CurrentSize():
+        return vim.current.window.height
