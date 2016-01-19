@@ -40,28 +40,17 @@ class IntervalSet( object ):
 
 
     def __len__( self ):
-        return len ( self._intervals )
+        return len( self._intervals )
 
 
-    def __iand__( self, other ):
+    def __contains__( self, other ):
+        if isinstance( other, IntervalSet ):
+            raise "Not supported"
         b = bisect.bisect_left( self._intervals, other )
         e = bisect.bisect_right( self._intervals, other )
-        if b == e:
-            self._intervals = []
-        else:
-            del self._intervals[ : b - 1 ]
-            self._intervals[ b ] &= other
-            if e - b > 1:
-                self._intervals[ e - 1 ] &= other
-            del self._intervals[ e : ]
-
-        return self
-
-
-    def __and__( self, other ):
-        result = copy.deepcopy( self )
-        result &= other
-        return result
+        if e - b == 1:
+            return other in self._intervals[ b ]
+        return False
 
 
     def __ior__( self, other ):
@@ -95,6 +84,27 @@ class IntervalSet( object ):
         return result
 
 
+    def __iand__( self, other ):
+        if isinstance( other, IntervalSet ):
+            raise "Not Supported."
+        b = bisect.bisect_left( self._intervals, other )
+        e = bisect.bisect_right( self._intervals, other )
+        if b == e:
+            return IntervalSet()
+        self._intervals[ b ] &= other
+        if b - e > 1:
+            self._intervals[ e - 1 ] &= other
+        del self._intervals[ e : ]
+        del self._intervals[ : b ]
+        return self
+
+
+    def __and__( self, other ):
+        result = copy.deepcopy( self )
+        result &= other
+        return result
+
+
     def _Normalize( self ):
         result = [ i for i in self._intervals if i ]
         self._intervals = result
@@ -120,4 +130,52 @@ class IntervalSet( object ):
     def __sub__( self, other ):
         result = copy.deepcopy( self )
         result -= other
+        return result
+
+
+    def GetIntervalForQuery( self, interval, size ):
+        if not self._intervals:
+            return copy.copy( interval ).EnlargeBottomTo( size )
+
+        b = bisect.bisect_left( self._intervals, interval )
+        e = bisect.bisect_right( self._intervals, interval )
+        if e - b > 1:
+            result = interval - self
+            if interval._begin not in self._intervals[ b ]:
+                result._intervals[ 0 ].EnlargeTopTo( size )
+                if b != 0:
+                    result._intervals[ 0 ] -= self._intervals[ b - 1 ]
+            if interval._end not in self._intervals[ e - 1 ]:
+                result._intervals[ -1 ].EnlargeBottomTo( size )
+                if e < len( self._intervals ):
+                    result._intervals[ -1 ] -= self._intervals[ e ]
+        elif e - b == 1:
+            result = interval - self._intervals[ b ]
+            if interval._begin in self._intervals[ b ]:
+                result.EnlargeBottomTo( size )
+                if e < len( self._intervals ):
+                    result -= self._intervals[ e ]
+            if interval._end in self._intervals[ b ]:
+                result.EnlargeTopTo( size )
+                if b != 0:
+                    result -= self._intervals[ b - 1 ]
+        else:
+            top = 1
+            if b != 0:
+                top = self._intervals[ b - 1 ]._end + 1
+            if e < len( self._intervals ):
+                bottom = self._intervals[ e ]._begin - 1
+            else:
+                bottom = interval._begin + size - 1
+            result = copy.copy( interval )
+            result.EnlargeBottomTo( size )
+            if result._end > bottom:
+                result.MoveUpBy( result._end - bottom )
+                if result._begin < top:
+                    result._begin = top
+            if result._begin < top:
+                result.MoveDownBy( top - result._begin )
+                if result._end > bottom:
+                    result._end = bottom
+
         return result

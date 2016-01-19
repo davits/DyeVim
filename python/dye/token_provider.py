@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 #
-# The MIT License (MIT)
+# The MIT License ( MIT )
 #
-# Copyright (c) 2016 Davit Samvelyan
+# Copyright ( c ) 2016 Davit Samvelyan
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
+# of this software and associated documentation files ( the "Software" ), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
@@ -22,31 +22,40 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from range import Range
+from interval_set import IntervalSet
+from viewport import Viewport
 
-from bisect import bisect_left, bisect_right
+import bisect
 
+class TokenProvider( object ):
 
-class TokenProvider(object):
-
-    def __init__(self, bufnr):
+    def __init__( self, bufnr ):
         self._bufnr = bufnr
         self._tokens = []
-        self._ranges = []
+        self._covered = IntervalSet(  )
 
 
-    def UpdateTokens(self, lr):
+    def UpdateTokens( self, lr ):
         self._tokens = []
-        self._ranges = []
+        self._covered = IntervalSet(  )
 
 
-    def GetTokens(self, query_range):
-        # extend query_range to the viewport size
-        l = bisect_left(self._ranges, query_range)
-        r = bisect_right(self._ranges, query_range)
-        if l == r:
-            self._QueryTokensAndStore(query_range)
+    def GetTokens( self, interval ):
+        if interval in self._covered:
+            return self._GetTokens( interval )
+        query_intervals = self._covered.GetIntervalForQuery( interval,
+                                                             Viewport.Size() )
+        for qi in query_intervals:
+            self_QueryAndStore( qi )
+
+        return self._GetTokens( interval )
 
 
-    def _QueryTokens(self, lr):
-        tokens = self._extractor.GetSemanticTokens(lr.begin, lr.end)
+    def _GetTokens( self, interval ):
+        b = bisect.bisect_left( self._tokens, interval._begin )
+        e = bisect.bisect_right( self._tokens, interval._end )
+        return self._tokens[ b : e ]
+
+
+    def _QueryTokens( self, lr ):
+        tokens = self._extractor.GetSemanticTokens( lr.begin, lr.end )

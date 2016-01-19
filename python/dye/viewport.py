@@ -22,69 +22,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from interval import Interval
+
 import vim
 
-# Interface for closed [b, e] range
 class Viewport(object):
-
-    def __init__(self, b, e):
-        self.begin = b
-        self.end = e
-
-
-    def __str__(self):
-        return '[{0}, {1}]'.format(self.begin, self.end)
-
-
-    def __eq__(self, other):
-        return self.begin == other.begin and self.end == other.end
-
-
-    def __ne__(self, other):
-        return self.begin != other.begin or self.end != other.end
-
-
-    def __sub__(self, other):
-
-        if other.begin <= self.begin and other.end >= self.end:
-            return []
-
-        result = []
-        if self._InRange(other.begin):
-            r = Viewport(self.begin, other.begin - 1)
-            if not r.IsNull():
-                result.append(r)
-
-        if self._InRange(other.end):
-            r = Viewport(other.end + 1, self.end)
-            if not r.IsNull():
-                result.append(r)
-
-        if not result:
-            result.append(self)
-
-        return result
-
-
-    def _InRange(self, value):
-        return value >= self.begin and value <= self.end
-
-
-    def IsNull(self):
-        return self.begin > self.end
-
-
-    def Size(self):
-        return 0 if self.IsNull() else self.end - self.begin + 1
-
 
     @staticmethod
     def Current():
         begin = int(vim.eval('line("w0")'))
         end = int(vim.eval('line("w$")'))
-        return Viewport(begin, end)
+        return Interval(begin, end)
 
 
     @staticmethod
-    def CurrentSize():
+    def Size():
         return vim.current.window.height

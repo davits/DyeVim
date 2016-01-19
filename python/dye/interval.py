@@ -38,8 +38,8 @@ class Interval( object ):
 
 
     def __eq__( self, other ):
-        return ( self._begin == other._begin and
-                 self._end == other._end )
+        return ( self.TopAligns( other ) and
+                 self.BottomAligns( other ) )
 
 
     def __ne__( self, other ):
@@ -77,7 +77,7 @@ class Interval( object ):
     def _SubtractInterval( self, other ):
         if self in other:
             # return invalid interval
-            return Interval(0, -1)
+            return Interval.Empty()
         i1 = None
         i2 = None
         if other._begin in self:
@@ -121,11 +121,65 @@ class Interval( object ):
 
 
     def __and__( self, other ):
-        if self.Overlaps( other ):
-            new_begin = max( self._begin, other._begin )
-            new_end = min( self._end, other._end )
-            return Interval(new_begin, new_end)
+        if isinstance( other, IntervalSet ):
+            result = other & self
+            l = len( result )
+            if l > 1:
+                return result
+            elif l == 1:
+                return result._intervals[ 0 ]
+            else:
+                return Interval.Empty()
+        else:
+            if self.Overlaps( other ):
+                new_begin = max( self._begin, other._begin )
+                new_end = min( self._end, other._end )
+                return Interval(new_begin, new_end)
+            return Interval.Empty()
 
-        return None
+
+    def TopAligns( self, other ):
+        return self._begin == other._begin
 
 
+    def BottomAligns( self, other ):
+        return self._end == other._end
+
+
+    def Follows( self, other ):
+        return self._begin == other._end + 1
+
+
+    def Precedes( self, other ):
+        return self._end + 1 == other._begin
+
+
+    def EnlargeTopTo( self, size ):
+        l = len( self )
+        if l < size:
+            self._begin -= size - l
+        if self._begin <= 0:
+            self._begin = 1
+
+
+    def EnlargeBottomTo( self, size ):
+        l = len( self )
+        if l < size:
+            self._end += size - l
+
+
+    def MoveUpBy( self, count ):
+        if count >= self._begin:
+            count = self._begin - 1
+        self._begin -= count
+        self._end -= count
+
+
+    def MoveDownBy( self, count ):
+        self._begin += count
+        self._end += count
+
+
+    @staticmethod
+    def Empty():
+        return Interval(0, -1)
