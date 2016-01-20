@@ -27,12 +27,18 @@ import copy
 
 class IntervalSet( object ):
 
-    def __init__(self, *args):
-        self._intervals = list( args )
+    def __init__( self, *args ):
+        self._intervals = []
+        for i in args:
+            self |= i
 
 
-    def __repr__(self):
-        return "<IntervalSet: {0} >".format(tuple(self._intervals))
+    def __repr__( self ):
+        return "IntervalSet: [ {0} ]".format( tuple( self._intervals ) )
+
+
+    def __eq__( self, other ):
+        return self._intervals == other._intervals
 
 
     def __iter__( self ):
@@ -45,7 +51,7 @@ class IntervalSet( object ):
 
     def __contains__( self, other ):
         if isinstance( other, IntervalSet ):
-            raise "Not supported"
+            raise TypeError( 'Invalid argument type for in operator.' )
         b = bisect.bisect_left( self._intervals, other )
         e = bisect.bisect_right( self._intervals, other )
         if e - b == 1:
@@ -86,7 +92,7 @@ class IntervalSet( object ):
 
     def __iand__( self, other ):
         if isinstance( other, IntervalSet ):
-            raise "Not Supported."
+            raise TypeError( 'Invalid argument type for & operator.' )
         b = bisect.bisect_left( self._intervals, other )
         e = bisect.bisect_right( self._intervals, other )
         if b == e:
@@ -112,7 +118,7 @@ class IntervalSet( object ):
 
     def __isub__( self, other ):
         if isinstance( other, IntervalSet ):
-            raise "Not Supported."
+            raise TypeError( 'Invalid argument type for - operator.' )
         b = bisect.bisect_left( self._intervals, other )
         e = bisect.bisect_right( self._intervals, other )
         if b == e:

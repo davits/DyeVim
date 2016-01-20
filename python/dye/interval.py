@@ -34,7 +34,7 @@ class Interval( object ):
 
 
     def __repr__(self):
-        return "<Interval: [{0}, {1}]>".format(self._begin, self._end)
+        return "Interval: [{0}, {1}]".format(self._begin, self._end)
 
 
     def __eq__( self, other ):
@@ -54,9 +54,12 @@ class Interval( object ):
         return self._begin > other._end
 
 
+    def __nonzero__( self ):
+        return self._begin > 0 and self._begin <= self._end
+
+
     def __len__( self ):
-        l = self._end - self._begin + 1
-        return l if l > 0 else 0
+        return self._end - self._begin + 1
 
 
     def __iter__( self ):
@@ -106,8 +109,8 @@ class Interval( object ):
 
 
     def _union( self, other ):
-        if ( self._end + 1 == other._begin or
-             other._end + 1 == self._begin or
+        if ( self.Precedes( other ) or
+             self.Follows( other ) or
              self.Overlaps( other ) ):
 
             new_begin = min( self._begin, other._begin )
@@ -160,12 +163,14 @@ class Interval( object ):
             self._begin -= size - l
         if self._begin <= 0:
             self._begin = 1
+        return self
 
 
     def EnlargeBottomTo( self, size ):
         l = len( self )
         if l < size:
             self._end += size - l
+        return self
 
 
     def MoveUpBy( self, count ):
@@ -173,11 +178,13 @@ class Interval( object ):
             count = self._begin - 1
         self._begin -= count
         self._end -= count
+        return self
 
 
     def MoveDownBy( self, count ):
         self._begin += count
         self._end += count
+        return self
 
 
     @staticmethod
