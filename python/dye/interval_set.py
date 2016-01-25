@@ -24,6 +24,7 @@
 
 import bisect
 import copy
+import sys
 
 class IntervalSet( object ):
 
@@ -60,28 +61,33 @@ class IntervalSet( object ):
 
 
     def __ior__( self, other ):
-        b = bisect.bisect_left( self._intervals, other )
-        e = bisect.bisect_right( self._intervals, other )
-        if b == e:
-            u = copy.copy( other )
+        if isinstance( other, IntervalSet ):
+            for i in other:
+                self |= i
+            return self
         else:
-            u = self._intervals[ b ] | other
-            if e - b > 1:
-                u |= self._intervals[ e - 1 ]
+            b = bisect.bisect_left( self._intervals, other )
+            e = bisect.bisect_right( self._intervals, other )
+            if b == e:
+                u = copy.copy( other )
+            else:
+                u = self._intervals[ b ] | other
+                if e - b > 1:
+                    u |= self._intervals[ e - 1 ]
 
-        if b > 0:
-            prev = self._intervals[ b - 1 ]
-            if prev._end + 1 == u._begin:
-                u._begin = prev._begin
-                b -= 1
-        if e < len( self ):
-            nxt = self._intervals[ e ]
-            if u._end + 1 == nxt._begin:
-                u._end = nxt._end
-                e += 1
+            if b > 0:
+                prev = self._intervals[ b - 1 ]
+                if prev._end + 1 == u._begin:
+                    u._begin = prev._begin
+                    b -= 1
+            if e < len( self ):
+                nxt = self._intervals[ e ]
+                if u._end + 1 == nxt._begin:
+                    u._end = nxt._end
+                    e += 1
 
-        self._intervals[ b : e ] = u
-        return self
+            self._intervals[ b : e ] = u
+            return self
 
 
     def __or__( self, other ):
@@ -96,9 +102,10 @@ class IntervalSet( object ):
         b = bisect.bisect_left( self._intervals, other )
         e = bisect.bisect_right( self._intervals, other )
         if b == e:
-            return IntervalSet()
+            self._intervals = []
+            return self
         self._intervals[ b ] &= other
-        if b - e > 1:
+        if e - b > 1:
             self._intervals[ e - 1 ] &= other
         del self._intervals[ e : ]
         del self._intervals[ : b ]
@@ -172,7 +179,7 @@ class IntervalSet( object ):
             if e < len( self._intervals ):
                 bottom = self._intervals[ e ]._begin - 1
             else:
-                bottom = interval._begin + size - 1
+                bottom = sys.maxint
             result = copy.copy( interval )
             result.EnlargeBottomTo( size )
             if result._end > bottom:

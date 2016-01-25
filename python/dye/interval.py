@@ -47,10 +47,14 @@ class Interval( object ):
 
 
     def __lt__( self, other ):
+        if isinstance( other, int ):
+            return self._end < other
         return self._end < other._begin
 
 
     def __gt__( self, other ):
+        if isinstance( other, int ):
+            return self._begin > other
         return self._begin > other._end
 
 
