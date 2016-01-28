@@ -43,9 +43,10 @@ class Token(object):
 
 
     def AddMatch(self):
-        self.matchId = vim.eval(
-            'matchaddpos("Dye_{0}", [[{1}, {2}, {3}]], -1)'
-            .format(self.kind, self.line, self.column, self.offset) )
+        if self.matchId == 0:
+            self.matchId = vim.eval(
+                'matchaddpos("Dye_{0}", [[{1}, {2}, {3}]], -1)'
+                .format(self.kind, self.line, self.column, self.offset) )
 
 
     def RemoveMatch(self):

@@ -29,12 +29,12 @@ import copy
 class Interval( object ):
 
     def __init__( self, b, e ):
-        self._begin = b
-        self._end = e
+        self.begin = b
+        self.end = e
 
 
     def __repr__(self):
-        return "Interval: [{0}, {1}]".format(self._begin, self._end)
+        return "Interval: [{0}, {1}]".format(self.begin, self.end)
 
 
     def __eq__( self, other ):
@@ -48,22 +48,22 @@ class Interval( object ):
 
     def __lt__( self, other ):
         if isinstance( other, int ):
-            return self._end < other
-        return self._end < other._begin
+            return self.end < other
+        return self.end < other.begin
 
 
     def __gt__( self, other ):
         if isinstance( other, int ):
-            return self._begin > other
-        return self._begin > other._end
+            return self.begin > other
+        return self.begin > other.end
 
 
     def __nonzero__( self ):
-        return self._begin > 0 and self._begin <= self._end
+        return self.begin > 0 and self.begin <= self.end
 
 
     def __len__( self ):
-        return self._end - self._begin + 1
+        return self.end - self.begin + 1
 
 
     def __iter__( self ):
@@ -73,8 +73,8 @@ class Interval( object ):
 
     def __contains__( self, other ):
         if isinstance( other, Interval ):
-            return other._begin >= self._begin and other._end <= self._end
-        return other >= self._begin and other <= self._end
+            return other.begin >= self.begin and other.end <= self.end
+        return other >= self.begin and other <= self.end
 
 
     def Overlaps( self, other ):
@@ -87,10 +87,10 @@ class Interval( object ):
             return Interval.Empty()
         i1 = None
         i2 = None
-        if other._begin in self:
-            i1 = Interval(self._begin, other._begin - 1)
-        if other._end in self:
-            i2 = Interval(other._end + 1, self._end)
+        if other.begin in self:
+            i1 = Interval(self.begin, other.begin - 1)
+        if other.end in self:
+            i2 = Interval(other.end + 1, self.end)
 
         if i1 and i2:
             return IntervalSet(i1, i2)
@@ -117,8 +117,8 @@ class Interval( object ):
              self.Follows( other ) or
              self.Overlaps( other ) ):
 
-            new_begin = min( self._begin, other._begin )
-            new_end = max( self._end, other._end )
+            new_begin = min( self.begin, other.begin )
+            new_end = max( self.end, other.end )
             return Interval(new_begin, new_end)
 
         return IntervalSet(self, other)
@@ -139,55 +139,55 @@ class Interval( object ):
                 return Interval.Empty()
         else:
             if self.Overlaps( other ):
-                new_begin = max( self._begin, other._begin )
-                new_end = min( self._end, other._end )
+                new_begin = max( self.begin, other.begin )
+                new_end = min( self.end, other.end )
                 return Interval(new_begin, new_end)
             return Interval.Empty()
 
 
     def TopAligns( self, other ):
-        return self._begin == other._begin
+        return self.begin == other.begin
 
 
     def BottomAligns( self, other ):
-        return self._end == other._end
+        return self.end == other.end
 
 
     def Follows( self, other ):
-        return self._begin == other._end + 1
+        return self.begin == other.end + 1
 
 
     def Precedes( self, other ):
-        return self._end + 1 == other._begin
+        return self.end + 1 == other.begin
 
 
     def EnlargeTopTo( self, size ):
         l = len( self )
         if l < size:
-            self._begin -= size - l
-        if self._begin <= 0:
-            self._begin = 1
+            self.begin -= size - l
+        if self.begin <= 0:
+            self.begin = 1
         return self
 
 
     def EnlargeBottomTo( self, size ):
         l = len( self )
         if l < size:
-            self._end += size - l
+            self.end += size - l
         return self
 
 
     def MoveUpBy( self, count ):
-        if count >= self._begin:
-            count = self._begin - 1
-        self._begin -= count
-        self._end -= count
+        if count >= self.begin:
+            count = self.begin - 1
+        self.begin -= count
+        self.end -= count
         return self
 
 
     def MoveDownBy( self, count ):
-        self._begin += count
-        self._end += count
+        self.begin += count
+        self.end += count
         return self
 
 

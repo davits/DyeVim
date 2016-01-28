@@ -24,38 +24,63 @@
 
 from interval_set import IntervalSet
 from viewport import Viewport
+from token import Token
 
 import bisect
 
 class TokenProvider( object ):
 
-    def __init__( self, bufnr ):
+    def __init__( self, bufnr, ycm ):
         self._bufnr = bufnr
+        self._ycm = ycm
         self._tokens = []
         self._covered = IntervalSet(  )
 
 
-    def UpdateTokens( self, lr ):
+    def Reset( self ):
         self._tokens = []
-        self._covered = IntervalSet(  )
+        self._covered = IntervalSet()
 
 
-    def GetTokens( self, interval ):
+    def GetTokens( self, interval, request = True ):
+        if not request:
+            return self._GetTokens( interval )
+
         if interval in self._covered:
             return self._GetTokens( interval )
+
         query_intervals = self._covered.GetIntervalForQuery( interval,
                                                              Viewport.Size() )
         for qi in query_intervals:
-            self_QueryAndStore( qi )
+            self._QueryAndStore( qi )
 
         return self._GetTokens( interval )
 
 
     def _GetTokens( self, interval ):
-        b = bisect.bisect_left( self._tokens, interval._begin )
-        e = bisect.bisect_right( self._tokens, interval._end )
+        b = bisect.bisect_left( self._tokens, interval.begin )
+        e = bisect.bisect_right( self._tokens, interval.end )
         return self._tokens[ b : e ]
 
 
-    def _QueryTokens( self, lr ):
-        tokens = self._extractor.GetSemanticTokens( lr.begin, lr.end )
+    def _QueryAndStore( self, interval ):
+        tokens = self._QueryTokens( interval )
+        if not isinstance( tokens, list ):
+            return
+        b = bisect.bisect_left( self._tokens, interval.begin )
+        e = bisect.bisect_right( self._tokens, interval.end )
+        self._tokens[ b : e ] = tokens
+        self._covered |= interval
+
+
+    def _QueryTokens( self, interval ):
+        token_dicts = self._ycm.GetSemanticTokens( self._bufnr,
+                                                   interval.begin, 1,
+                                                   interval.end + 1, 1,
+                                                   0.01 )
+        if isinstance( token_dicts, str ):
+            if token_dicts == 'Parsing':
+                pass
+            return False
+
+        return [ Token( x ) for x in token_dicts ]

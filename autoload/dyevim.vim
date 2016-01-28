@@ -47,13 +47,13 @@ script_folder = vim.eval( 's:script_folder_path' )
 sys.path.insert( 0, os.path.join( script_folder, '../python' ) )
 
 from dye.dyevim import DyeVim
-dyevim_state = DyeVim()
+try:
+    dyevim_state = DyeVim( ycm_state )
+except NameError:
+    vim.command('return 0')
 
-def DyeVimSemanticTokensReady(bufnr):
-    dyevim_state.OnSemanticTokensReady(bufnr, ycm_state)
-
-ycm_state.RegisterSemanticTokensReadyPythonCallback(DyeVimSemanticTokensReady)
 EOF
+return 1
 endfunction
 
 function! s:SetupAutocommands()

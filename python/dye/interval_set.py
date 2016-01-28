@@ -77,13 +77,13 @@ class IntervalSet( object ):
 
             if b > 0:
                 prev = self._intervals[ b - 1 ]
-                if prev._end + 1 == u._begin:
-                    u._begin = prev._begin
+                if prev.end + 1 == u.begin:
+                    u.begin = prev.begin
                     b -= 1
             if e < len( self ):
                 nxt = self._intervals[ e ]
-                if u._end + 1 == nxt._begin:
-                    u._end = nxt._end
+                if u.end + 1 == nxt.begin:
+                    u.end = nxt.end
                     e += 1
 
             self._intervals[ b : e ] = u
@@ -154,41 +154,41 @@ class IntervalSet( object ):
         e = bisect.bisect_right( self._intervals, interval )
         if e - b > 1:
             result = interval - self
-            if interval._begin not in self._intervals[ b ]:
+            if interval.begin not in self._intervals[ b ]:
                 result._intervals[ 0 ].EnlargeTopTo( size )
                 if b != 0:
                     result._intervals[ 0 ] -= self._intervals[ b - 1 ]
-            if interval._end not in self._intervals[ e - 1 ]:
+            if interval.end not in self._intervals[ e - 1 ]:
                 result._intervals[ -1 ].EnlargeBottomTo( size )
                 if e < len( self._intervals ):
                     result._intervals[ -1 ] -= self._intervals[ e ]
         elif e - b == 1:
             result = interval - self._intervals[ b ]
-            if interval._begin in self._intervals[ b ]:
+            if interval.begin in self._intervals[ b ]:
                 result.EnlargeBottomTo( size )
                 if e < len( self._intervals ):
                     result -= self._intervals[ e ]
-            if interval._end in self._intervals[ b ]:
+            if interval.end in self._intervals[ b ]:
                 result.EnlargeTopTo( size )
                 if b != 0:
                     result -= self._intervals[ b - 1 ]
         else:
             top = 1
             if b != 0:
-                top = self._intervals[ b - 1 ]._end + 1
+                top = self._intervals[ b - 1 ].end + 1
             if e < len( self._intervals ):
-                bottom = self._intervals[ e ]._begin - 1
+                bottom = self._intervals[ e ].begin - 1
             else:
                 bottom = sys.maxint
             result = copy.copy( interval )
             result.EnlargeBottomTo( size )
-            if result._end > bottom:
-                result.MoveUpBy( result._end - bottom )
-                if result._begin < top:
-                    result._begin = top
-            if result._begin < top:
-                result.MoveDownBy( top - result._begin )
-                if result._end > bottom:
-                    result._end = bottom
+            if result.end > bottom:
+                result.MoveUpBy( result.end - bottom )
+                if result.begin < top:
+                    result.begin = top
+            if result.begin < top:
+                result.MoveDownBy( top - result.begin )
+                if result.end > bottom:
+                    result.end = bottom
 
         return result

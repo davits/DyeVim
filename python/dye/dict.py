@@ -23,25 +23,12 @@
 # SOFTWARE.
 
 
-from buffer import Buffer
-from dict import Dict
+class Dict( dict ):
 
-import vim
-
-
-class DyeVim( object ):
-    def __init__( self, ycm ):
-        self._ycm = ycm
-        ycm.RegisterFileParseReadyCallback( self.OnSemanticTokensReady )
-        self._buffers = Dict( lambda bufnr: Buffer( bufnr, self._ycm ) )
+    def __init__( self, creator ):
+        self._creator = creator
 
 
-    def OnSemanticTokensReady( self, bufnr ):
-        if vim.current.buffer.number != bufnr:
-            return
-
-        self._buffers[ bufnr ].OnUpdateTokens()
-
-
-    def OnCursorMoved( self ):
-        self._buffers[ vim.current.buffer.number ].OnCursorMoved()
+    def __missing__( self, key ):
+        value = self[ key ] = self._creator( key )
+        return value
