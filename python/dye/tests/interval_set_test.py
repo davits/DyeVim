@@ -160,3 +160,13 @@ def BestQueryRange_test():
 
     eq_( s, IntervalSet( Interval( 20, 100 ) ) )
 
+    s = IntervalSet()
+    r = s.GetIntervalForQuery( Interval( 9, 9 ), 20 )
+    eq_( r, Interval( 9, 28 ) )
+    s |= r # [9, 28]
+
+    r = s.GetIntervalForQuery( Interval( 8, 8 ), 20 )
+    eq_( r, Interval( 1, 8 ) )
+    s |= r # [1, 28]
+
+    eq_( s, IntervalSet( Interval( 1, 28 ) ) )

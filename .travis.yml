@@ -5,7 +5,9 @@ python:
   - "2.7"
 
 # command to install dependencies
-install: "pip install nose"
+install:
+  - "pip install flake8"
+  - "pip install nose"
 
 # command to run tests
-script: nosetests -v -w python/
+script: ./run_tests.py

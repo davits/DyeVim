@@ -25,8 +25,11 @@
 from interval_set import IntervalSet
 from viewport import Viewport
 from token import Token
+import log
 
 import bisect
+
+import vim
 
 class TokenProvider( object ):
 
@@ -74,13 +77,17 @@ class TokenProvider( object ):
 
 
     def _QueryTokens( self, interval ):
+        log.info( 'Querying tokens for buffer {0}, interval {1}'.
+                   format( self._bufnr, interval ) )
         token_dicts = self._ycm.GetSemanticTokens( self._bufnr,
                                                    interval.begin, 1,
                                                    interval.end + 1, 1,
                                                    0.01 )
         if isinstance( token_dicts, str ):
-            if token_dicts == 'Parsing':
+            if token_dicts == 'Timeout':
+                # message
                 pass
             return False
 
-        return [ Token( x ) for x in token_dicts ]
+        ft = vim.buffers[ self._bufnr ].options[ 'filetype' ]
+        return [ Token( ft, x ) for x in token_dicts ]

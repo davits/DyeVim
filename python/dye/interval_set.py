@@ -153,42 +153,61 @@ class IntervalSet( object ):
         b = bisect.bisect_left( self._intervals, interval )
         e = bisect.bisect_right( self._intervals, interval )
         if e - b > 1:
-            result = interval - self
-            if interval.begin not in self._intervals[ b ]:
-                result._intervals[ 0 ].EnlargeTopTo( size )
-                if b != 0:
-                    result._intervals[ 0 ] -= self._intervals[ b - 1 ]
-            if interval.end not in self._intervals[ e - 1 ]:
-                result._intervals[ -1 ].EnlargeBottomTo( size )
-                if e < len( self._intervals ):
-                    result._intervals[ -1 ] -= self._intervals[ e ]
+            return self._GetQueryIntervalMulti( interval, size, b, e )
         elif e - b == 1:
-            result = interval - self._intervals[ b ]
-            if interval.begin in self._intervals[ b ]:
-                result.EnlargeBottomTo( size )
-                if e < len( self._intervals ):
-                    result -= self._intervals[ e ]
-            if interval.end in self._intervals[ b ]:
-                result.EnlargeTopTo( size )
-                if b != 0:
-                    result -= self._intervals[ b - 1 ]
+            return self._GetQueryIntervalSingle( interval, size, b, e )
         else:
-            top = 1
-            if b != 0:
-                top = self._intervals[ b - 1 ].end + 1
-            if e < len( self._intervals ):
-                bottom = self._intervals[ e ].begin - 1
-            else:
-                bottom = sys.maxint
-            result = copy.copy( interval )
-            result.EnlargeBottomTo( size )
-            if result.end > bottom:
-                result.MoveUpBy( result.end - bottom )
-                if result.begin < top:
-                    result.begin = top
-            if result.begin < top:
-                result.MoveDownBy( top - result.begin )
-                if result.end > bottom:
-                    result.end = bottom
+            return self._GetQueryInterval( interval, size, b )
 
+
+    # Get best query range when there are intersections with multiple intervals
+    def _GetQueryIntervalMulti( self, interval, size, b, e ):
+        result = interval - self
+        if interval.begin not in self._intervals[ b ]:
+            result._intervals[ 0 ].EnlargeTopTo( size )
+            if b != 0:
+                result._intervals[ 0 ] -= self._intervals[ b - 1 ]
+        if interval.end not in self._intervals[ e - 1 ]:
+            result._intervals[ -1 ].EnlargeBottomTo( size )
+            if e < len( self._intervals ):
+                result._intervals[ -1 ] -= self._intervals[ e ]
+        return result
+
+
+    # Get best query range when there is an intersection with single interval
+    def _GetQueryIntervalSingle( self, interval, size, b, e ):
+        result = interval - self._intervals[ b ]
+        if interval.begin in self._intervals[ b ]:
+            result.EnlargeBottomTo( size )
+            if e < len( self._intervals ):
+                result -= self._intervals[ e ]
+        if interval.end in self._intervals[ b ]:
+            result.EnlargeTopTo( size )
+            if b != 0:
+                result -= self._intervals[ b - 1 ]
+        return result
+
+
+    # Get best query range when there are no intersections
+    def _GetQueryInterval( self, interval, size, b ):
+        top = 1
+        if b != 0:
+            top = self._intervals[ b - 1 ].end + 1
+        if b < len( self._intervals ):
+            bottom = self._intervals[ b ].begin - 1
+        else:
+            bottom = sys.maxint
+        result = copy.copy( interval )
+        result.EnlargeBottomTo( size )
+        if result.end > bottom:
+            result.MoveUpBy( result.end - bottom )
+            # Interval can't be moved upper then 1
+            if result.end > bottom:
+                result.end = bottom
+            if result.begin < top:
+                result.begin = top
+        if result.begin < top:
+            result.MoveDownBy( top - result.begin )
+            if result.end > bottom:
+                result.end = bottom
         return result

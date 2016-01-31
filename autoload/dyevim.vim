@@ -25,18 +25,21 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 let s:script_folder_path = escape( expand( '<sfile>:p:h' ), '\' )
+let s:current_filetype = ''
 
 function! dyevim#Enable()
     if &diff
         return
     endif
 
-    call s:SetupPython()
-    call s:SetupSyntaxRules()
+    if s:SetupPython() != 1
+        return
+    endif
+
     call s:SetupAutocommands()
     call s:SetupWheelMappings()
-    "call youcompleteme#RegisterSemanticTokensReadyPythonCallback(
-    "    \ 'DyeVimSemanticTokensReady')
+
+    call s:OnBufferEnter()
 endfunction
 
 function! s:SetupPython()
@@ -61,6 +64,10 @@ function! s:SetupAutocommands()
         autocmd!
         autocmd CursorMovedI * call s:OnCursorMoved()
         autocmd CursorMoved * call s:OnCursorMoved()
+
+        autocmd BufRead,BufEnter * call s:OnBufferEnter()
+        autocmd BufLeave * call s:OnBufferLeave()
+        autocmd FileType * call s:OnSetFileType()
     augroup END
 endfunction
 
@@ -68,21 +75,16 @@ function! s:OnCursorMoved()
     py dyevim_state.OnCursorMoved()
 endfunction
 
-function! s:SetupSyntaxRules()
-    highlight NormalBold gui=bold
-    highlight TypeBold ctermfg=121 guifg=#b58900 gui=bold
-    highlight link Dye_Namespace Function
-    highlight link Dye_Class TypeBold
-    highlight link Dye_Struct TypeBold
-    highlight link Dye_Union TypeBold
-    highlight link Dye_MemberVariable Function
-    highlight link Dye_Typedef TypeBold
-    highlight link Dye_TemplateType TypeBold
-    highlight link Dye_Enum TypeBold
-    highlight link Dye_EnumConstant Constant
-    highlight link Dye_Macro Macro
-    highlight link Dye_Function Function
-    highlight link Dye_FunctionParam NormalBold
+function! s:OnBufferEnter()
+    py dyevim_state.OnBufferEnter()
+endfunction
+
+function! s:OnBufferLeave()
+    py dyevim_state.OnBufferLeave()
+endfunction
+
+function! s:OnSetFileType()
+    py dyevim_state.InitializeCurrentFiletypeIfNeeded()
 endfunction
 
 function! s:SetupWheelMappings()

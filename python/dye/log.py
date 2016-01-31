@@ -22,35 +22,47 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import vim
-
-class Token( object ):
-
-    def __init__( self, filetype, value ):
-        self.group = 'Dye_{0}_{1}'.format( filetype, value[ 'kind' ] )
-        self.line = value[ 'line_number' ]
-        self.column = value[ 'column_number' ]
-        self.offset = value[ 'offset' ]
-        self.matchId = 0
-        self._create = ( 'matchaddpos("{0}", [[{1}, {2}, {3}]], -1)'
-                         .format( self.group, self.line,
-                                  self.column, self.offset ) )
+import logging
 
 
-    def __lt__( self, line ):
-        return self.line < line
+def InitLogging( level = None ):
+
+    logging_level = None
+    if level == 'info':
+        logging_level = logging.INFO
+    elif level == 'debug':
+        logging_level = logging.DEBUG
+
+    if not logging_level:
+        return
+
+    global info, debug
+    info = _info
+    debug = _debug
+
+    logger = logging.getLogger( 'dyevim' )
+    logger.setLevel( logging_level )
+
+    fh = logging.FileHandler( 'dyevim.log' )
+    fh.setLevel( logging_level )
+    logger.addHandler( fh )
 
 
-    def __gt__( self, line ):
-        return self.line > line
+def debug( *args ):
+    pass
 
 
-    def AddMatch( self ):
-        if self.matchId == 0:
-            self.matchId = vim.eval( self._create )
+def info( *args ):
+    pass
 
 
-    def RemoveMatch( self ):
-        if self.matchId != 0:
-            vim.command( 'call matchdelete({0})'.format( self.matchId ) )
-            self.matchId = 0
+def _get():
+    return logging.getLogger( 'dyevim' )
+
+
+def _debug( *args ):
+    _get().debug( *args )
+
+
+def _info( *args ):
+    _get().info( *args )

@@ -69,6 +69,19 @@ class Buffer( object ):
         self._viewport = current
 
 
+    def OnEnter( self ):
+        pass
+
+
+    def OnLeave( self ):
+        pass
+        #self._RemoveMatchesFromViewport( self._viewport )
+
+
+    def RemoveMatches( self ):
+        self._RemoveMatchesFromViewport( self._viewport )
+
+
     def OnLineInserted( self, line, count ):
         self._RemoveMatchesFromViewport( Viewport( line, self._viewport.end ) )
 
