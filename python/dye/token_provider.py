@@ -77,8 +77,8 @@ class TokenProvider( object ):
 
 
     def _QueryTokens( self, interval ):
-        log.info( 'Querying tokens for buffer {0}, interval {1}'.
-                   format( self._bufnr, interval ) )
+        log.debug( 'Querying tokens for buffer {0}, interval {1}'
+                    .format( self._bufnr, interval ) )
         token_dicts = self._ycm.GetSemanticTokens( self._bufnr,
                                                    interval.begin, 1,
                                                    interval.end + 1, 1,

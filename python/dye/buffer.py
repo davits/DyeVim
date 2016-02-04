@@ -52,7 +52,7 @@ class Buffer( object ):
 
 
     def OnCursorMoved( self ):
-        current = Viewport.Current(  )
+        current = Viewport.Current()
         if self._viewport != current:
             self.OnViewportChanged( current )
 
@@ -75,7 +75,6 @@ class Buffer( object ):
 
     def OnLeave( self ):
         pass
-        #self._RemoveMatchesFromViewport( self._viewport )
 
 
     def RemoveMatches( self ):

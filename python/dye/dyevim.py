@@ -29,15 +29,19 @@ import log
 
 import vim
 
+DV_UNIQUE_WID_VAR = 'DyeVimUniqueWId'
+
 class DyeVim( object ):
     def __init__( self, ycm ):
         log.InitLogging()
         self._ycm = ycm
         ycm.RegisterFileParseReadyCallback( self.OnSemanticTokensReady )
         self._buffers = Dict( lambda bufnr: Buffer( bufnr, self._ycm ) )
-        self._current_buffer = 0
-        self._current_window = (0, 0)
         self._initialized_filetypes = []
+        self._uniqueWId = 1
+        self._enteringWindow = False
+        self._leavingWindow = 1
+        self._leavingBuffer = 1
 
 
     def OnSemanticTokensReady( self, bufnr ):
@@ -54,16 +58,37 @@ class DyeVim( object ):
 
     def OnBufferEnter( self ):
         self.InitializeCurrentFiletypeIfNeeded()
+        log.info( 'OnBufferEnter %d', vim.current.buffer.number )
+        if not self._enteringWindow:
+            self._buffers[ self._leavingBuffer ].RemoveMatches()
+        self._enteringWindow = False
+        self._buffers[ vim.current.buffer.number ].OnEnter()
 
-        cw = ( vim.current.tabpage.number, vim.current.window.number )
-        # If we are opening new buffer in the same (tab, window)
-        # then old buffer tokens need to be removed
-        if cw == self._current_window:
-            self._buffers[ self._current_buffer ].RemoveMatches()
-        else:
-            self._current_window = cw
-        self._current_buffer = vim.current.buffer.number
-        self._buffers[ self._current_buffer ].OnEnter()
+        # If new buffer is opened in the same window
+        # remove matches for old buffer.
+        #if self._GetCurrentWId() == self._leavingWindow:
+        #    self._buffers[ self._leavingBuffer ].RemoveMatches()
+        #self._buffers[ vim.current.buffer.number ].OnEnter()
+
+
+    def OnBufWinEnter( self ):
+        pass
+
+
+    def OnBufferLeave( self ):
+        log.info( 'OnBufferLeave %d', vim.current.buffer.number )
+        self._leavingBuffer = vim.current.buffer.number
+        self._buffers[ self._leavingBuffer ].OnLeave()
+
+
+    def OnWinEnter( self ):
+        log.info( 'OnWinEnter' )
+        self._enteringWindow = True
+        self._SetCurrentWId()
+
+
+    def OnWinLeave( self ):
+        self._leavingWindow = self._GetCurrentWId()
 
 
     def InitializeCurrentFiletypeIfNeeded( self ):
@@ -76,6 +101,11 @@ class DyeVim( object ):
             self._initialized_filetypes.append( ft )
 
 
-    def OnBufferLeave( self ):
-        pass
-        #self._buffers[ vim.current.buffer.number ].OnLeave()
+    def _GetCurrentWId( self ):
+        return vim.current.window.vars[ DV_UNIQUE_WID_VAR ]
+
+
+    def _SetCurrentWId( self ):
+        if not vim.current.window.vars.has_key( DV_UNIQUE_WID_VAR ):
+            vim.current.window.vars[ DV_UNIQUE_WID_VAR ] = self._uniqueWId
+            self._uniqueWId += 1
