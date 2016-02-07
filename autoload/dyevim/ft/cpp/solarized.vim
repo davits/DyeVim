@@ -20,26 +20,6 @@
 " OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 " SOFTWARE.
 
-function! dyevim#ft#cpp#Setup()
-    try
-        exec 'call dyevim#ft#cpp#' . g:colors_name . '#Setup()'
-        return
-    catch
-    endtry
-
-    call dyevim#colors#CreateBoldVariant( 'NormalBold', 'Normal' )
-    call dyevim#colors#CreateBoldVariant( 'TypeBold', 'Type' )
-    call dyevim#colors#CreateItalicVariant( 'FunctionItalic', 'Function' )
-    highlight link Dye_cpp_Namespace FunctionItalic
-    highlight link Dye_cpp_Class TypeBold
-    highlight link Dye_cpp_Struct TypeBold
-    highlight link Dye_cpp_Union TypeBold
-    highlight link Dye_cpp_MemberVariable Function
-    highlight link Dye_cpp_Typedef TypeBold
-    highlight link Dye_cpp_TemplateType TypeBold
-    highlight link Dye_cpp_Enum TypeBold
-    highlight link Dye_cpp_EnumConstant Constant
-    highlight link Dye_cpp_Macro Macro
-    highlight link Dye_cpp_Function Function
-    highlight link Dye_cpp_FunctionParam NormalBold
+function! dyevim#ft#cpp#solarized#Setup()
+    throw 'Not implemented'
 endfunction

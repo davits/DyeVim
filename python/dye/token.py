@@ -27,14 +27,15 @@ import vim
 class Token( object ):
 
     def __init__( self, filetype, value ):
-        self.group = 'Dye_{0}_{1}'.format( filetype, value[ 'kind' ] )
-        self.line = value[ 'line_number' ]
-        self.column = value[ 'column_number' ]
-        self.offset = value[ 'offset' ]
-        self.matchId = 0
+        group = 'Dye_{0}_{1}'.format( filetype, value[ 'kind' ] )
+        line = value[ 'line_number' ]
+        column = value[ 'column_number' ]
+        offset = value[ 'offset' ]
+
+        self.line = line
+        self._matchIds = {}
         self._create = ( 'matchaddpos("{0}", [[{1}, {2}, {3}]], -1)'
-                         .format( self.group, self.line,
-                                  self.column, self.offset ) )
+                         .format( group, line, column, offset ) )
 
 
     def __lt__( self, line ):
@@ -45,12 +46,12 @@ class Token( object ):
         return self.line > line
 
 
-    def AddMatch( self ):
-        if self.matchId == 0:
-            self.matchId = vim.eval( self._create )
+    def AddMatch( self, wid ):
+        if wid not in self._matchIds:
+            self._matchIds[ wid ] = vim.eval( self._create )
 
 
-    def RemoveMatch( self ):
-        if self.matchId != 0:
-            vim.command( 'call matchdelete({0})'.format( self.matchId ) )
-            self.matchId = 0
+    def RemoveMatch( self, wid ):
+        matchId = self._matchIds.pop( wid, 0 )
+        if matchId != 0:
+            vim.command( 'call matchdelete({0})'.format( matchId ) )

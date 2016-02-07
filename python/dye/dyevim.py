@@ -24,8 +24,11 @@
 
 
 from buffer import Buffer
+from window import Window
 from dict import Dict
 import log
+
+from collections import defaultdict
 
 import vim
 
@@ -34,61 +37,38 @@ DV_UNIQUE_WID_VAR = 'DyeVimUniqueWId'
 class DyeVim( object ):
     def __init__( self, ycm ):
         log.InitLogging()
-        self._ycm = ycm
         ycm.RegisterFileParseReadyCallback( self.OnSemanticTokensReady )
+        self._ycm = ycm
         self._buffers = Dict( lambda bufnr: Buffer( bufnr, self._ycm ) )
-        self._initialized_filetypes = []
-        self._uniqueWId = 1
+        self._windows = Dict( lambda wid: Window( wid,
+                                                  self._GetWIdBuffer( wid ) ) )
+        self._windowBuffer = defaultdict( int )
+        self._initialized_filetypes = set()
+        self._nextUniqueWId = 1
         self._enteringWindow = False
-        self._leavingWindow = 1
-        self._leavingBuffer = 1
 
 
     def OnSemanticTokensReady( self, bufnr ):
         if vim.current.buffer.number != bufnr:
             return
-
-        log.info( 'OnSemanticTokensReady {0}'.format( bufnr ) )
-        self._buffers[ bufnr ].OnUpdateTokens()
+        self._windows[ self._GetCurrentWId() ].OnUpdateTokens()
 
 
     def OnCursorMoved( self ):
-        self._buffers[ vim.current.buffer.number ].OnCursorMoved()
+        self._windows[ self._GetCurrentWId() ].OnCursorMoved()
+
+
+    def OnWindowEnter( self ):
+        self._SetCurrentWId()
 
 
     def OnBufferEnter( self ):
         self.InitializeCurrentFiletypeIfNeeded()
-        log.info( 'OnBufferEnter %d', vim.current.buffer.number )
-        if not self._enteringWindow:
-            self._buffers[ self._leavingBuffer ].RemoveMatches()
-        self._enteringWindow = False
-        self._buffers[ vim.current.buffer.number ].OnEnter()
-
-        # If new buffer is opened in the same window
-        # remove matches for old buffer.
-        #if self._GetCurrentWId() == self._leavingWindow:
-        #    self._buffers[ self._leavingBuffer ].RemoveMatches()
-        #self._buffers[ vim.current.buffer.number ].OnEnter()
-
-
-    def OnBufWinEnter( self ):
-        pass
-
-
-    def OnBufferLeave( self ):
-        log.info( 'OnBufferLeave %d', vim.current.buffer.number )
-        self._leavingBuffer = vim.current.buffer.number
-        self._buffers[ self._leavingBuffer ].OnLeave()
-
-
-    def OnWinEnter( self ):
-        log.info( 'OnWinEnter' )
-        self._enteringWindow = True
-        self._SetCurrentWId()
-
-
-    def OnWinLeave( self ):
-        self._leavingWindow = self._GetCurrentWId()
+        wid = self._GetCurrentWId()
+        bnr = vim.current.buffer.number
+        if self._windowBuffer[ wid ] != bnr:
+            self._windowBuffer[ wid ] = bnr
+            self._windows[ wid ].OnBufferChanged( self._buffers[ bnr ] )
 
 
     def InitializeCurrentFiletypeIfNeeded( self ):
@@ -98,7 +78,7 @@ class DyeVim( object ):
                 vim.command('call dyevim#ft#' + ft + '#Setup()')
             except:
                 pass
-            self._initialized_filetypes.append( ft )
+            self._initialized_filetypes.add( ft )
 
 
     def _GetCurrentWId( self ):
@@ -107,5 +87,9 @@ class DyeVim( object ):
 
     def _SetCurrentWId( self ):
         if not vim.current.window.vars.has_key( DV_UNIQUE_WID_VAR ):
-            vim.current.window.vars[ DV_UNIQUE_WID_VAR ] = self._uniqueWId
-            self._uniqueWId += 1
+            vim.current.window.vars[ DV_UNIQUE_WID_VAR ] = self._nextUniqueWId
+            self._nextUniqueWId += 1
+
+
+    def _GetWIdBuffer( self, wid ):
+        return self._buffers[ self._windowBuffer[ wid ] ]

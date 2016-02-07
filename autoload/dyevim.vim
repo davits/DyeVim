@@ -39,9 +39,8 @@ function! dyevim#Enable()
     call s:SetupAutocommands()
     call s:SetupWheelMappings()
 
-    call s:OnWinEnter()
+    call s:OnWindowEnter()
     call s:OnBufferEnter()
-    "call s:OnBufWinEnter()
 endfunction
 
 function! s:SetupPython()
@@ -67,14 +66,10 @@ function! s:SetupAutocommands()
         autocmd CursorMovedI * call s:OnCursorMoved()
         autocmd CursorMoved * call s:OnCursorMoved()
 
+        autocmd WinEnter * call s:OnWindowEnter()
         autocmd BufEnter * call s:OnBufferEnter()
-        autocmd BufLeave * call s:OnBufferLeave()
+
         autocmd FileType * call s:OnSetFileType()
-
-        autocmd BufWinEnter * call s:OnBufWinEnter()
-
-        autocmd WinEnter * call s:OnWinEnter()
-        autocmd WinLeave * call s:OnWinLeave()
     augroup END
 endfunction
 
@@ -82,28 +77,16 @@ function! s:OnCursorMoved()
     py dyevim_state.OnCursorMoved()
 endfunction
 
+function! s:OnWindowEnter()
+    py dyevim_state.OnWindowEnter()
+endfunction
+
 function! s:OnBufferEnter()
     py dyevim_state.OnBufferEnter()
 endfunction
 
-function! s:OnBufWinEnter()
-    py dyevim_state.OnBufWinEnter()
-endfunction
-
-function! s:OnBufferLeave()
-    py dyevim_state.OnBufferLeave()
-endfunction
-
 function! s:OnSetFileType()
     py dyevim_state.InitializeCurrentFiletypeIfNeeded()
-endfunction
-
-function! s:OnWinEnter()
-    py dyevim_state.OnWinEnter()
-endfunction
-
-function! s:OnWinLeave()
-    py dyevim_state.OnWinLeave()
 endfunction
 
 function! s:SetupWheelMappings()

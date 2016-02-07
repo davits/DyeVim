@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 #
-# The MIT License (MIT)
+# The MIT License ( MIT )
 #
-# Copyright (c) 2016 Davit Samvelyan
+# Copyright ( c ) 2016 Davit Samvelyan
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
+# of this software and associated documentation files ( the "Software" ), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
@@ -22,85 +22,72 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
+from interval_set import IntervalSet
 from viewport import Viewport
-from token_provider import TokenProvider
+from token import Token
+import log
 
 import bisect
+
+import vim
 
 class Buffer( object ):
 
     def __init__( self, bufnr, ycm ):
-        self._tp = TokenProvider( bufnr, ycm )
-        self._viewport = Viewport.Current()
+        self.number = bufnr
+        self._ycm = ycm
+        self._tokens = []
+        self._covered = IntervalSet(  )
 
 
-    def OnUpdateTokens( self ):
-        self._RemoveMatchesFromViewport( self._viewport )
-        self._tp.Reset()
-        self._CreateMatchesForViewport( self._viewport )
+    def Reset( self ):
+        self._tokens = []
+        self._covered = IntervalSet()
 
 
-    def _CreateMatchesForViewport( self, view ):
-        for token in self._tp.GetTokens( view ):
-            token.AddMatch()
+    def GetTokens( self, interval, request = True ):
+        if not request:
+            return self._GetTokens( interval )
+
+        if interval in self._covered:
+            return self._GetTokens( interval )
+
+        query_intervals = self._covered.GetIntervalForQuery( interval,
+                                                             Viewport.Size() )
+        for qi in query_intervals:
+            self._QueryAndStore( qi )
+
+        return self._GetTokens( interval )
 
 
-    def _RemoveMatchesFromViewport( self, view ):
-        for token in self._tp.GetTokens( view, False ):
-            token.RemoveMatch()
+    def _GetTokens( self, interval ):
+        b = bisect.bisect_left( self._tokens, interval.begin )
+        e = bisect.bisect_right( self._tokens, interval.end )
+        return self._tokens[ b : e ]
 
 
-    def OnCursorMoved( self ):
-        current = Viewport.Current()
-        if self._viewport != current:
-            self.OnViewportChanged( current )
+    def _QueryAndStore( self, interval ):
+        tokens = self._QueryTokens( interval )
+        if not isinstance( tokens, list ):
+            return
+        b = bisect.bisect_left( self._tokens, interval.begin )
+        e = bisect.bisect_right( self._tokens, interval.end )
+        self._tokens[ b : e ] = tokens
+        self._covered |= interval
 
 
-    def OnViewportChanged( self, current ):
-        remove_views = self._viewport - current
-        for view in remove_views:
-            self._RemoveMatchesFromViewport( view )
+    def _QueryTokens( self, interval ):
+        log.debug( 'Querying tokens for buffer {0}, interval {1}'
+                    .format( self.number, interval ) )
+        token_dicts = self._ycm.GetSemanticTokens( self.number,
+                                                   interval.begin, 1,
+                                                   interval.end + 1, 1,
+                                                   0.01 )
+        if isinstance( token_dicts, str ):
+            if token_dicts == 'Timeout':
+                # message
+                pass
+            return False
 
-        apply_views = current - self._viewport
-        for view in apply_views:
-            self._CreateMatchesForViewport( view )
-
-        self._viewport = current
-
-
-    def OnEnter( self ):
-        pass
-
-
-    def OnLeave( self ):
-        pass
-
-
-    def RemoveMatches( self ):
-        self._RemoveMatchesFromViewport( self._viewport )
-
-
-    def OnLineInserted( self, line, count ):
-        self._RemoveMatchesFromViewport( Viewport( line, self._viewport.end ) )
-
-        line_index = bisect.bisect_left( self._tokens, line )
-        for i in range( line_index, len( self._tokens ) ):
-            self._tokens[i].line += count
-
-        self._CreateMatchesForViewport( Viewport( line + count, self._viewport.end ) )
-
-
-    def OnLineRemoved( self, line, count ):
-        self._RemoveMatchesFromViewport( Viewport( line, self._viewport.end ) )
-
-        end = line + count - 1
-        token_range = self._GetTokensRangeForViewport( Viewport( line, end ) )
-        del self._tokens[token_range[0] : token_range[1]]
-
-        end_index = bisect.bisect_right( self._tokens, end )
-        for i in range( end_index, len( self._tokens ) ):
-            self._tokens[i].line -= count
-
-        self._CreateMatchesForViewport( Viewport( line, self._viewport.end ) )
-
+        ft = vim.buffers[ self.number ].options[ 'filetype' ]
+        return [ Token( ft, x ) for x in token_dicts ]
