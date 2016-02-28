@@ -90,4 +90,7 @@ class Buffer( object ):
             return False
 
         ft = vim.buffers[ self.number ].options[ 'filetype' ]
-        return [ Token( ft, x ) for x in token_dicts ]
+        return [ Token( ft, x ) for x in token_dicts
+                                    if x[ 'kind' ] == 'Identifier' and
+                                       x[ 'type' ] != 'Unsupported' and
+                                       x[ 'start_line' ] == x[ 'end_line' ] ]

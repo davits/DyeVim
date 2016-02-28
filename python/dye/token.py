@@ -27,10 +27,14 @@ import vim
 class Token( object ):
 
     def __init__( self, filetype, value ):
-        group = 'Dye_{0}_{1}'.format( filetype, value[ 'kind' ] )
-        line = value[ 'line_number' ]
-        column = value[ 'column_number' ]
-        offset = value[ 'offset' ]
+        if value[ 'kind' ] != 'Identifier':
+            raise ValueError( 'Only Identifers are supported.' )
+        if value[ 'type' ] == 'Unsupported':
+            raise ValueError( 'Unsupported tokens should be filtered.' )
+        group = 'Dye_{0}_{1}'.format( filetype, value[ 'type' ] )
+        line = value[ 'start_line' ]
+        column = value[ 'start_column' ]
+        offset = value[ 'end_column' ] - value[ 'start_column' ]
 
         self.line = line
         self._matchIds = {}
