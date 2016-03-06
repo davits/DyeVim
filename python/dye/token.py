@@ -31,10 +31,16 @@ class Token( object ):
             raise ValueError( 'Only Identifers are supported.' )
         if value[ 'type' ] == 'Unsupported':
             raise ValueError( 'Unsupported tokens should be filtered.' )
+        range = value[ 'range' ]
+        start = range[ 'start' ]
+        end = range[ 'end' ]
+        line = start[ 'line_num' ]
+        if line != end[ 'line_num' ]:
+            raise ValueError( 'Multiline tokens are not supported.' )
+
+        column = start[ 'column_num' ]
+        offset = end[ 'column_num' ] - column
         group = 'Dye_{0}_{1}'.format( filetype, value[ 'type' ] )
-        line = value[ 'start_line' ]
-        column = value[ 'start_column' ]
-        offset = value[ 'end_column' ] - value[ 'start_column' ]
 
         self.line = line
         self._matchIds = {}
