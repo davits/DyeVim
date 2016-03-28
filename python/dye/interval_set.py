@@ -29,7 +29,7 @@ from __future__ import division
 
 import bisect
 import copy
-import sys
+from sys import maxsize
 
 class IntervalSet( object ):
 
@@ -201,7 +201,7 @@ class IntervalSet( object ):
         if b < len( self._intervals ):
             bottom = self._intervals[ b ].begin - 1
         else:
-            bottom = sys.maxint
+            bottom = maxsize
         result = copy.copy( interval )
         result.EnlargeBottomTo( size )
         if result.end > bottom:

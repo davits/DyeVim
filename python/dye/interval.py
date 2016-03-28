@@ -64,6 +64,10 @@ class Interval( object ):
 
 
     def __nonzero__( self ):
+        return self.__bool__()
+
+
+    def __bool__( self ):
         return self.begin > 0 and self.begin <= self.end
 
 

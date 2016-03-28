@@ -35,9 +35,9 @@ class Viewport(object):
 
     @staticmethod
     def Current():
-        begin = int(vim.eval('line("w0")'))
-        end = int(vim.eval('line("w$")'))
-        return Interval(begin, end)
+        begin = int( vim.eval( 'line("w0")' ) )
+        end = int( vim.eval( 'line("w$")' ) )
+        return Interval( begin, end )
 
 
     @staticmethod
