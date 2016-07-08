@@ -34,10 +34,6 @@ import vim
 class Token( object ):
 
     def __init__( self, filetype, range, type ):
-        if value[ 'kind' ] != 'Identifier':
-            raise ValueError( 'Only Identifers are supported.' )
-        if value[ 'type' ] == 'Unsupported':
-            raise ValueError( 'Unsupported tokens should be filtered.' )
 
         start = range[ 'start' ]
         end = range[ 'end' ]
