@@ -27,38 +27,55 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 
+from .interval import Interval
+
 import vim
 
 class Token( object ):
 
-    def __init__( self, filetype, value ):
+    def __init__( self, filetype, range, type ):
         if value[ 'kind' ] != 'Identifier':
             raise ValueError( 'Only Identifers are supported.' )
         if value[ 'type' ] == 'Unsupported':
             raise ValueError( 'Unsupported tokens should be filtered.' )
-        range = value[ 'range' ]
+
         start = range[ 'start' ]
         end = range[ 'end' ]
-        line = start[ 'line_num' ]
-        if line != end[ 'line_num' ]:
-            raise ValueError( 'Multiline tokens are not supported.' )
+        start_line = start[ 'line_num' ]
+        start_col = start[ 'column_num' ]
+        end_line = end[ 'line_num' ]
+        end_col = end[ 'column_num' ]
+        group = 'Dye_{0}_{1}'.format( filetype, type )
 
-        column = start[ 'column_num' ]
-        offset = end[ 'column_num' ] - column
-        group = 'Dye_{0}_{1}'.format( filetype, value[ 'type' ] )
-
-        self.line = line
+        self.range = Interval( start_line, end_line )
         self._matchIds = {}
-        self._create = ( 'matchaddpos("{0}", [[{1}, {2}, {3}]], -1)'
-                         .format( group, line, column, offset ) )
+        self._create = self._GetTokenCreateStr( group,
+                                                start_line, start_col,
+                                                end_line, end_col )
 
 
     def __lt__( self, line ):
-        return self.line < line
+        return self.range < line
 
 
     def __gt__( self, line ):
-        return self.line > line
+        return self.range > line
+
+
+    def _GetTokenCreateStr( self, group,
+                            start_line, start_column,
+                            end_line, end_column ):
+        if start_line == end_line:
+            return ( 'matchaddpos("{0}", [[{1}, {2}, {3}]], -1)'
+                      .format( group, start_line, start_column,
+                               end_column - start_column ) )
+
+        regex = '\%{0}l\%>{1}c\|'.format( start_line, start_column - 1 )
+        if end_line - start_line > 1:
+            regex += '\%>{0}l\%<{1}l\|'.format( start_line, end_line )
+        regex += '\%{0}l\%<{1}c'.format( end_line, end_column + 1 )
+
+        return 'matchadd("{0}", \'{1}\', -1)'.format( group, regex )
 
 
     def AddMatch( self, wid ):

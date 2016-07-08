@@ -186,6 +186,12 @@ class Interval( object ):
         return self
 
 
+    def LimitBottomBy( self, limit ):
+        if self.end > limit:
+            self.end = limit
+        return self
+
+
     def MoveUpBy( self, count ):
         if count >= self.begin:
             count = self.begin - 1

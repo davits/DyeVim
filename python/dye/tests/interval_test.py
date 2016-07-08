@@ -150,6 +150,10 @@ def Operations_test():
 
     eq_( Interval( 1, 10 ).MoveDownBy( 10 ), Interval( 11, 20 ) )
 
+    eq_( Interval( 1, 5 ).LimitBottomBy( 10 ), Interval( 1, 5 ) )
+    eq_( Interval( 1, 5 ).LimitBottomBy( 5 ), Interval( 1, 5 ) )
+    eq_( Interval( 1, 10 ).LimitBottomBy( 5 ), Interval( 1, 5 ) )
+
 
 # I'm new to python
 def Reference_test():

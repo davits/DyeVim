@@ -59,10 +59,17 @@ class Buffer( object ):
 
         query_intervals = self._covered.GetIntervalForQuery( interval,
                                                              Viewport.Size() )
+        if query_intervals:
+            query_intervals[ -1 ].LimitBottomBy( self._GetSize() )
+
         for qi in query_intervals:
             self._QueryAndStore( qi )
 
         return self._GetTokens( interval )
+
+
+    def _GetSize( self ):
+        return len( vim.buffers[ self.number ] )
 
 
     def _GetTokens( self, interval ):
@@ -97,8 +104,9 @@ class Buffer( object ):
         ft = vim.buffers[ self.number ].options[ 'filetype' ]
         tokens = []
         for td in token_dicts:
-            try:
-                tokens.append( Token( ft, td ) )
-            except:
-                pass
+            if ( td[ 'kind' ] != 'Identifier' or
+                 td[ 'type' ] == 'Unsupported' ):
+                continue
+            tokens.append( Token( ft, td[ 'range' ], td[ 'type' ] ) )
+
         return tokens
