@@ -51,7 +51,7 @@ class Buffer( object ):
         self._tokens = []
         self._covered = IntervalSet()
         self._sr_tokens = []
-        self._sr_queried = True
+        self._sr_queried = False
 
 
     def GetTokens( self, interval, request = True ):
@@ -62,10 +62,8 @@ class Buffer( object ):
 
         query_intervals = self._covered.GetIntervalForQuery( interval,
                                                              Viewport.Size() )
-        if query_intervals:
-            query_intervals[ -1 ].LimitBottomBy( self._GetBufferSize() )
-
         for qi in query_intervals:
+            qi.LimitBottomBy( self._GetBufferSize() )
             self._QueryTokensAndStore( qi )
 
         return self._GetIntervalTokens( self._tokens, interval )
@@ -73,7 +71,7 @@ class Buffer( object ):
 
     def GetSkippedRanges( self, interval, request = True ):
         log.debug( 'GetSkippedRanges from buffer {0}, interval {1}'
-                   .format( self.number ) )
+                   .format( self.number, interval ) )
         if not request or self._sr_queried:
             return self._GetIntervalTokens( self._sr_tokens, interval )
 
@@ -83,9 +81,12 @@ class Buffer( object ):
 
 
     def _QuerySkippedRanges( self ):
-        log.info( 'Querying skipped ranges for buffer {0}' )
-        skipped_ranges = self._ycm.GetSemanticTokens( self.number, 0.01 )
-        if isinstance( skipped_ranges, str ):
+        log.info( 'Querying skipped ranges for buffer {0}'
+                  .format( self.number ) )
+        skipped_ranges = self._ycm.GetSkippedRanges( self.number, 0.01 )
+
+        if ( isinstance( skipped_ranges, str ) or
+             isinstance( skipped_ranges, unicode ) ):
             if skipped_ranges == 'Timeout':
                 # message
                 pass
@@ -117,7 +118,8 @@ class Buffer( object ):
                                                    interval.begin, 1,
                                                    interval.end, end_col,
                                                    0.01 )
-        if isinstance( token_dicts, str ):
+        if ( isinstance( token_dicts, str ) or
+             isinstance( token_dicts, unicode ) ):
             if token_dicts == 'Timeout':
                 # message
                 pass
@@ -128,7 +130,7 @@ class Buffer( object ):
         for td in token_dicts:
             tk = td[ 'kind' ]
             tt = td[ 'type' ]
-            if tk == 'Identifier' or tt != 'Unsupported':
+            if tk == 'Identifier' and tt != 'Unsupported':
                 tr = td[ 'range' ]
                 tokens.extend( Token.CreateTokens( ft, tt, tr ) )
 
@@ -137,7 +139,7 @@ class Buffer( object ):
 
 
     def _GetIntervalTokens( self, tokens, interval ):
-        ( b, e ) = self._Bisect( interval )
+        ( b, e ) = self._Bisect( tokens, interval )
         return tokens[ b : e ]
 
 
@@ -155,5 +157,5 @@ class Buffer( object ):
         return len( vim.buffers[ self.number ] )
 
 
-    def _GetLineSize( self, ln ):
-        return len( vim.buffer[ self.number ][ ln ] )
+    def _GetLineSize( self, line ):
+        return len( vim.buffers[ self.number ][ line ] ) + 1

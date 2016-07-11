@@ -47,4 +47,4 @@ class Range( object ):
 
 
     def Offset( self ):
-        return self.end.column - self.end.column
+        return self.end.column - self.start.column

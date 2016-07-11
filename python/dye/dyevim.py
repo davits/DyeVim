@@ -40,7 +40,7 @@ DV_UNIQUE_WID_VAR = 'DyeVimUniqueWId'
 
 class DyeVim( object ):
     def __init__( self, ycm ):
-        log.InitLogging('info')
+        log.InitLogging('debug')
         ycm.RegisterFileParseReadyCallback( self.OnSemanticTokensReady )
         self._ycm = ycm
         self._buffers = Dict( lambda bufnr: Buffer( bufnr, self._ycm ) )
@@ -53,6 +53,7 @@ class DyeVim( object ):
 
 
     def OnSemanticTokensReady( self, bufnr ):
+        log.info( 'OnSemanticTokensReady buffer: {0}'.format( bufnr ) )
         if vim.current.buffer.number != bufnr:
             return
         self._windows[ self._GetCurrentWId() ].OnUpdateTokens()

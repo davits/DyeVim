@@ -53,7 +53,7 @@ class Window( object ):
         for token in self._buffer.GetTokens( view ):
             token.AddMatch( self._wid )
 
-        for sr in self._buffer.GetSkippedRanges( view, False ):
+        for sr in self._buffer.GetSkippedRanges( view ):
             sr.AddMatch( self._wid )
 
 
