@@ -42,4 +42,5 @@ function! dyevim#ft#cpp#Setup()
     highlight link Dye_cpp_Macro Macro
     highlight link Dye_cpp_Function Function
     highlight link Dye_cpp_FunctionParam NormalBold
+    highlight link Dye_cpp_SkippedRange Comment
 endfunction

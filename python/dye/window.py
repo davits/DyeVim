@@ -29,8 +29,6 @@ from __future__ import division
 
 from .viewport import Viewport
 
-import bisect
-
 class Window( object ):
 
     def __init__( self, wid, buffer ):
@@ -55,10 +53,16 @@ class Window( object ):
         for token in self._buffer.GetTokens( view ):
             token.AddMatch( self._wid )
 
+        for sr in self._buffer.GetSkippedRanges( view, False ):
+            sr.AddMatch( self._wid )
+
 
     def _RemoveMatchesFromViewport( self, view ):
         for token in self._buffer.GetTokens( view, False ):
             token.RemoveMatch( self._wid )
+
+        for sr in self._buffer.GetSkippedRanges( view, False ):
+            sr.RemoveMatch( self._wid )
 
 
     def OnCursorMoved( self ):
@@ -77,28 +81,3 @@ class Window( object ):
             self._CreateMatchesForViewport( view )
 
         self._viewport = current
-
-
-    def OnLineInserted( self, line, count ):
-        self._RemoveMatchesFromViewport( Viewport( line, self._viewport.end ) )
-
-        line_index = bisect.bisect_left( self._tokens, line )
-        for i in range( line_index, len( self._tokens ) ):
-            self._tokens[i].line += count
-
-        self._CreateMatchesForViewport( Viewport( line + count, self._viewport.end ) )
-
-
-    def OnLineRemoved( self, line, count ):
-        self._RemoveMatchesFromViewport( Viewport( line, self._viewport.end ) )
-
-        end = line + count - 1
-        token_range = self._GetTokensRangeForViewport( Viewport( line, end ) )
-        del self._tokens[token_range[0] : token_range[1]]
-
-        end_index = bisect.bisect_right( self._tokens, end )
-        for i in range( end_index, len( self._tokens ) ):
-            self._tokens[i].line -= count
-
-        self._CreateMatchesForViewport( Viewport( line, self._viewport.end ) )
-

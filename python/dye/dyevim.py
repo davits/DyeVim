@@ -40,7 +40,7 @@ DV_UNIQUE_WID_VAR = 'DyeVimUniqueWId'
 
 class DyeVim( object ):
     def __init__( self, ycm ):
-        log.InitLogging()
+        log.InitLogging('info')
         ycm.RegisterFileParseReadyCallback( self.OnSemanticTokensReady )
         self._ycm = ycm
         self._buffers = Dict( lambda bufnr: Buffer( bufnr, self._ycm ) )
