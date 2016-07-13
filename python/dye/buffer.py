@@ -85,8 +85,7 @@ class Buffer( object ):
                   .format( self.number ) )
         skipped_ranges = self._ycm.GetSkippedRanges( self.number, 0.01 )
 
-        if ( isinstance( skipped_ranges, str ) or
-             isinstance( skipped_ranges, unicode ) ):
+        if not isinstance( skipped_ranges, list ):
             if skipped_ranges == 'Timeout':
                 # message
                 pass
@@ -118,8 +117,7 @@ class Buffer( object ):
                                                    interval.begin, 1,
                                                    interval.end, end_col,
                                                    0.01 )
-        if ( isinstance( token_dicts, str ) or
-             isinstance( token_dicts, unicode ) ):
+        if not isinstance( token_dicts, list ):
             if token_dicts == 'Timeout':
                 # message
                 pass

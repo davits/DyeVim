@@ -75,6 +75,8 @@ endfunction
 
 function! s:OnCursorMoved()
     py dyevim_state.OnCursorMoved()
+    " Return empty string for <C-R> mapping
+    return ''
 endfunction
 
 function! s:OnWindowEnter()
@@ -93,29 +95,29 @@ function! s:SetupWheelMappings()
     nnoremap <silent> <ScrollWheelUp>
                     \ <ScrollWheelUp>:call <SID>OnCursorMoved()<CR>
     inoremap <silent> <ScrollWheelUp>
-                    \ <ScrollWheelUp><ESC>:call <SID>OnCursorMoved()<CR><INS>
+                    \ <ScrollWheelUp><C-R>=<SID>OnCursorMoved()<CR>
     nnoremap <silent> <ScrollWheelDown>
                     \ <ScrollWheelDown>:call <SID>OnCursorMoved()<CR>
     inoremap <silent> <ScrollWheelDown>
-                    \ <ScrollWheelDown><ESC>:call <SID>OnCursorMoved()<CR><INS>
+                    \ <ScrollWheelDown><C-R>=<SID>OnCursorMoved()<CR>
 
     nnoremap <silent> <S-ScrollWheelUp>
                     \ <S-ScrollWheelUp>:call <SID>OnCursorMoved()<CR>
     inoremap <silent> <S-ScrollWheelUp>
-                    \ <S-ScrollWheelUp><ESC>:call <SID>OnCursorMoved()<CR><INS>
+                    \ <S-ScrollWheelUp><C-R>=<SID>OnCursorMoved()<CR>
     nnoremap <silent> <S-ScrollWheelDown>
                     \ <S-ScrollWheelDown>:call <SID>OnCursorMoved()<CR>
     inoremap <silent> <S-ScrollWheelDown>
-                    \ <S-ScrollWheelDown><ESC>:call <SID>OnCursorMoved()<CR><INS>
+                    \ <S-ScrollWheelDown><C-R>=<SID>OnCursorMoved()<CR>
 
     nnoremap <silent> <C-ScrollWheelUp>
                     \ <C-ScrollWheelUp>:call <SID>OnCursorMoved()<CR>
     inoremap <silent> <C-ScrollWheelUp>
-                    \ <C-ScrollWheelUp><ESC>:call <SID>OnCursorMoved()<CR><INS>
+                    \ <C-ScrollWheelUp><C-R>=<SID>OnCursorMoved()<CR>
     nnoremap <silent> <C-ScrollWheelDown>
                     \ <C-ScrollWheelDown>:call <SID>OnCursorMoved()<CR>
     inoremap <silent> <C-ScrollWheelDown>
-                    \ <C-ScrollWheelDown><ESC>:call <SID>OnCursorMoved()<CR><INS>
+                    \ <C-ScrollWheelDown><C-R>=<SID>OnCursorMoved()<CR>
 endfunction
 
 " This is basic vim plugin boilerplate
