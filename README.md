@@ -5,7 +5,8 @@ DyeVim: semantic highlighting for Vim
 
 
 This plugin brings semantic highlighting into Vim.
-![DyeVim Demo](http://imgur.com/a/RRWvh)
+
+![DyeVim Demo](http://i.imgur.com/3tzV3tP.png)
 
 Semantic tokens are provided by the [ycmd][] and extracted via [YouCompleteMe][] plugin's frontend API. So in order to work DyeVim requires YouCompleteMe plugin to be installed.
 DyeVim works out of box and does not require any special configuration (assuming that YouCompleteMe is up and working normal), the only requirement is that it should be added to the Vim's runtimepath after YouCompleteMe.
