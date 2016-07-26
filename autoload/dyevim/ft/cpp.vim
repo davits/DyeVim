@@ -29,12 +29,13 @@ function! dyevim#ft#cpp#Setup()
 
     call dyevim#colors#CreateBoldVariant( 'NormalBold', 'Normal' )
     call dyevim#colors#CreateBoldVariant( 'TypeBold', 'Type' )
-    call dyevim#colors#CreateItalicVariant( 'FunctionItalic', 'Function' )
-    highlight link Dye_cpp_Namespace FunctionItalic
+    call dyevim#colors#CreateBoldVariant( 'FunctionBold', 'Function' )
+    call dyevim#colors#CreateItalicVariant( 'TypeItalic', 'Type' )
+    highlight link Dye_cpp_Namespace TypeItalic
     highlight link Dye_cpp_Class TypeBold
     highlight link Dye_cpp_Struct TypeBold
     highlight link Dye_cpp_Union TypeBold
-    highlight link Dye_cpp_MemberVariable Function
+    highlight link Dye_cpp_MemberVariable FunctionBold
     highlight link Dye_cpp_Typedef TypeBold
     highlight link Dye_cpp_TemplateType TypeBold
     highlight link Dye_cpp_Enum TypeBold
@@ -43,5 +44,5 @@ function! dyevim#ft#cpp#Setup()
     highlight link Dye_cpp_Macro Macro
     highlight link Dye_cpp_Function Function
     highlight link Dye_cpp_FunctionParam NormalBold
-    highlight link Dye_cpp_SkippedRange Comment
+    highlight link Dye_cpp_SkippedRange cCppOutSkip
 endfunction
