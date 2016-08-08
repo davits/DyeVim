@@ -39,10 +39,10 @@ elseif v:version < 704 || (v:version == 704 && !has('patch405'))
         \ echohl None
   call s:restore_cpo()
   finish
-elseif !has( 'python' )
+elseif !has( 'python' ) && !has( 'python3' )
   echohl WarningMsg |
         \ echomsg "DyeVim unavailable: requires Vim compiled with " .
-        \ "Python 2.x support" |
+        \ "Python (2.6+ or 3.3+) support" |
         \ echohl None
   call s:restore_cpo()
   finish
@@ -54,8 +54,7 @@ elseif !exists( "g:loaded_youcompleteme" ) || g:loaded_youcompleteme != 1
   finish
 endif
 
-
-
+let g:loaded_dyevim = 1
 
 " On-demand loading. Let's use the autoload folder and not slow down vim's
 " startup procedure.

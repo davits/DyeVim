@@ -26,6 +26,8 @@ set cpo&vim
 
 let s:script_folder_path = escape( expand( '<sfile>:p:h' ), '\' )
 let s:current_filetype = ''
+let s:py = has('python') ? "py" : "py3"
+let s:python_eof = has('python') ? "python << EOF" : "python3 << EOF"
 
 function! dyevim#Enable()
     if &diff
@@ -44,7 +46,13 @@ function! dyevim#Enable()
 endfunction
 
 function! s:SetupPython()
-python << EOF
+exec s:python_eof
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+
+import os
 import sys
 
 script_folder = vim.eval( 's:script_folder_path' )
@@ -55,7 +63,6 @@ try:
     dyevim_state = DyeVim( ycm_state )
 except NameError:
     vim.command('return 0')
-
 EOF
 return 1
 endfunction
@@ -74,21 +81,21 @@ function! s:SetupAutocommands()
 endfunction
 
 function! s:OnCursorMoved()
-    py dyevim_state.OnCursorMoved()
+    exec s:py "dyevim_state.OnCursorMoved()"
     " Return empty string for <C-R> mapping
     return ''
 endfunction
 
 function! s:OnWindowEnter()
-    py dyevim_state.OnWindowEnter()
+    exec s:py "dyevim_state.OnWindowEnter()"
 endfunction
 
 function! s:OnBufferEnter()
-    py dyevim_state.OnBufferEnter()
+    exec s:py "dyevim_state.OnBufferEnter()"
 endfunction
 
 function! s:OnSetFileType()
-    py dyevim_state.InitializeCurrentFiletypeIfNeeded()
+    exec s:py "dyevim_state.InitializeCurrentFiletypeIfNeeded()"
 endfunction
 
 function! s:SetupWheelMappings()
