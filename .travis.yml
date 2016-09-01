@@ -8,6 +8,14 @@ python:
 install:
   - "pip install flake8"
   - "pip install nose"
+  - "pip install codecov"
 
 # command to run tests
 script: ./run_tests.py
+
+after_success:
+  - codecov
+
+cache:
+  directories:
+    - $HOME/.cache/pip  # Python packages from pip

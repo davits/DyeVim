@@ -20,6 +20,8 @@ def RunFlake8():
 def NoseTests():
   subprocess.check_call( [
     'nosetests',
+    '--with-coverage',
+    '--cover-erase',
     '-v',
     '-w',
     PYTHON_DIR
