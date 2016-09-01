@@ -22,10 +22,21 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from nose.tools import eq_, ok_, assert_raises
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
 
 from dye.interval import Interval
 from dye.interval_set import IntervalSet
+
+from nose.tools import eq_, ok_, raises
+
+
+def String_test():
+    # 100% coverity baby
+    eq_( "%s" % IntervalSet( Interval( 1, 10 ), Interval( 20, 30 ) ),
+         "IntervalSet: (Interval: [1, 10], Interval: [20, 30])" )
 
 
 def Construction_test():
@@ -35,8 +46,6 @@ def Construction_test():
 
 def Contains_test():
     s = IntervalSet( Interval( 1, 10 ), Interval( 20, 30 ), Interval( 40, 50 ) )
-
-    assert_raises( TypeError, IntervalSet.__contains__, s, IntervalSet() )
 
     ok_( Interval( 1, 10 ) in s )
     ok_( Interval( 25, 27 ) in s )
@@ -87,8 +96,15 @@ def Union_test():
                                               Interval( 32, 38 ),
                                               Interval( 40, 50 ) ) )
 
+    eq_( s | Interval(15, 35), IntervalSet( Interval( 1, 10 ),
+                                            Interval( 15, 35 ),
+                                            Interval( 40, 50 ) ) )
+
+    eq_( s | Interval(5, 45), IntervalSet( Interval( 1, 50 ) ) )
+
     eq_( s | IntervalSet( Interval( 11, 19 ), Interval( 35, 39 ) ),
          IntervalSet( Interval( 1, 30 ), Interval( 35, 50 ) ) )
+
 
 
 def Intersect_test():
@@ -113,6 +129,10 @@ def Subtract_test():
     eq_( s - Interval( 25, 25 ), IntervalSet( Interval( 1, 10 ),
                                               Interval( 20, 24 ),
                                               Interval( 26, 30 ),
+                                              Interval( 40, 50 ) ) )
+
+    eq_( s - Interval( 12, 18 ), IntervalSet( Interval( 1, 10 ),
+                                              Interval( 20, 30 ),
                                               Interval( 40, 50 ) ) )
 
 
@@ -154,11 +174,16 @@ def BestQueryRange_test():
     eq_( r, Interval( 72, 81 ) )
     s |= r # [ [20, 69], [72, 81], [85, 100] ]
 
-    r = s.GetIntervalForQuery( Interval( 69, 85 ), 10 )
-    eq_( r, IntervalSet( Interval( 70, 71 ), Interval( 82, 84 ) ) )
-    s |= r # [20, 100]
+    r = s.GetIntervalForQuery( Interval( 105, 106 ), 10 )
+    eq_( r, Interval( 105, 114 ) )
+    s |= r # [ [20, 69], [72, 81], [85, 100], [105, 114] ]
 
-    eq_( s, IntervalSet( Interval( 20, 100 ) ) )
+    r = s.GetIntervalForQuery( Interval( 70, 104 ), 10 )
+    eq_( r, IntervalSet( Interval( 70, 71 ), Interval( 82, 84 ),
+                         Interval( 101, 104 ) ) )
+    s |= r # [20, 114]
+
+    eq_( s, IntervalSet( Interval( 20, 114 ) ) )
 
     s = IntervalSet()
     r = s.GetIntervalForQuery( Interval( 9, 9 ), 20 )
@@ -169,4 +194,28 @@ def BestQueryRange_test():
     eq_( r, Interval( 1, 8 ) )
     s |= r # [1, 28]
 
-    eq_( s, IntervalSet( Interval( 1, 28 ) ) )
+    r = s.GetIntervalForQuery( Interval( 35, 40 ), 10 )
+    eq_( r, Interval( 35, 44 ) )
+    s |= r # [ [1, 28], [35, 44] ]
+
+    r = s.GetIntervalForQuery( Interval( 30, 31 ), 10 )
+    eq_( r, Interval( 29, 34 ) )
+    r = s.GetIntervalForQuery( Interval( 26, 31 ), 10 )
+    eq_( r, Interval( 29, 34 ) )
+    s |= r # [1, 44]
+
+    eq_( s, IntervalSet( Interval( 1, 44 ) ) )
+
+
+@raises(TypeError)
+def ContainsError_test():
+    IntervalSet( Interval( 2, 8 ) ) in IntervalSet( Interval( 1, 10 ) )
+
+
+@raises(TypeError)
+def IntersectError_test():
+    IntervalSet( Interval( 2, 8 ) ) & IntervalSet( Interval( 1, 10 ) )
+
+@raises(TypeError)
+def SubtractError_test():
+    IntervalSet( Interval( 1, 10 ) ) - IntervalSet( Interval( 2, 8 ) )

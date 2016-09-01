@@ -7,3 +7,4 @@ __pycache__/
 
 # Coverage auto-generated
 .coverage
+cover/

@@ -2,6 +2,7 @@ DyeVim: semantic highlighting for Vim
 =====================================
 
 [![Build Status](https://travis-ci.org/davits/DyeVim.svg?branch=master)](https://travis-ci.org/davits/DyeVim)
+[![codecov](https://codecov.io/gh/davits/DyeVim/branch/master/graph/badge.svg)](https://codecov.io/gh/davits/DyeVim)
 
 
 This plugin brings semantic highlighting into Vim.

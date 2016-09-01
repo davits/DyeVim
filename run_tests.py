@@ -21,6 +21,7 @@ def NoseTests():
   subprocess.check_call( [
     'nosetests',
     '--with-coverage',
+    '--cover-html',
     '--cover-erase',
     '-v',
     '-w',

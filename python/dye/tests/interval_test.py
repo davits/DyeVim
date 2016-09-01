@@ -22,11 +22,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from nose.tools import eq_, ok_
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
 
 from dye.interval import Interval
 from dye.interval_set import IntervalSet
 
+from nose.tools import eq_, ok_
+
+
+def String_test():
+    # 100% coverage baby
+    eq_( "%s" % Interval( 1, 10 ), "Interval: [1, 10]" )
 
 def Boolean_test():
     ok_( Interval( 1, 1 ) )

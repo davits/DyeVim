@@ -40,7 +40,7 @@ class IntervalSet( object ):
 
 
     def __repr__( self ):
-        return "IntervalSet: [ {0} ]".format( tuple( self._intervals ) )
+        return "IntervalSet: {0}".format( tuple( self._intervals ) )
 
 
     def __eq__( self, other ):
@@ -196,12 +196,12 @@ class IntervalSet( object ):
     # Get best query range when there are no intersections
     def _GetQueryInterval( self, interval, size, b ):
         top = 1
+        bottom = maxsize
         if b != 0:
             top = self._intervals[ b - 1 ].end + 1
         if b < len( self._intervals ):
             bottom = self._intervals[ b ].begin - 1
-        else:
-            bottom = maxsize
+
         result = copy.copy( interval )
         result.EnlargeBottomTo( size )
         if result.end > bottom:
