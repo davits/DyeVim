@@ -21,19 +21,26 @@
 " SOFTWARE.
 
 function! dyevim#ft#cpp#solarized#Setup()
-    throw 'Not implemented'
-    "highlight Dye_cpp_Namespace guifg=... guibg=...
-    "highlight Dye_cpp_Class
-    "highlight Dye_cpp_Struct
-    "highlight Dye_cpp_Union
-    "highlight Dye_cpp_MemberVariable
-    "highlight Dye_cpp_Typedef
-    "highlight Dye_cpp_TemplateType
-    "highlight Dye_cpp_Enum
-    "highlight Dye_cpp_EnumConstant
-    "highlight Dye_cpp_PreprocessingDirective
-    "highlight Dye_cpp_Macro
-    "highlight Dye_cpp_Function
-    "highlight Dye_cpp_FunctionParam
-    "highlight Dye_cpp_SkippedRange
+    "throw 'Not implemented'
+    "TODO add terminal support
+    hi UserType guifg=#c17100
+    hi Namespace guifg=#c17100 gui=italic
+    hi MemberVar guifg=#6c71c4
+    hi FunctionParam guifg=#93a1a1 gui=bold
+    hi SkippedRange guifg=#657b83
+
+    hi link Dye_cpp_Namespace Namespace
+    hi link Dye_cpp_Class UserType
+    hi link Dye_cpp_Struct UserType
+    hi link Dye_cpp_Union UserType
+    hi link Dye_cpp_MemberVariable MemberVar
+    hi link Dye_cpp_Typedef UserType
+    hi link Dye_cpp_TemplateType UserType
+    hi link Dye_cpp_Enum UserType
+    hi link Dye_cpp_EnumConstant Constant
+    hi link Dye_cpp_PreprocessingDirective Macro
+    hi link Dye_cpp_Macro Macro
+    hi link Dye_cpp_Function Function
+    hi link Dye_cpp_FunctionParam FunctionParam
+    hi link Dye_cpp_SkippedRange SkippedRange
 endfunction

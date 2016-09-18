@@ -36,6 +36,7 @@ from collections import defaultdict
 
 import vim
 
+DV_SUPPORTED_FILETYPES = [ 'cpp', 'c' ]
 DV_UNIQUE_WID_VAR = 'DyeVimUniqueWId'
 
 class DyeVim( object ):
@@ -61,7 +62,8 @@ class DyeVim( object ):
 
 
     def OnCursorMoved( self ):
-        self._windows[ self._GetCurrentWId() ].OnCursorMoved()
+        if self._IsFileTypeSupported():
+            self._windows[ self._GetCurrentWId() ].OnCursorMoved()
 
 
     def OnWindowEnter( self ):
@@ -69,7 +71,7 @@ class DyeVim( object ):
 
 
     def OnBufferEnter( self ):
-        self.InitializeCurrentFiletypeIfNeeded()
+        self._InitializeCurrentFiletypeIfNeeded()
         wid = self._GetCurrentWId()
         bnr = vim.current.buffer.number
         if self._windowBuffer[ wid ] != bnr:
@@ -77,7 +79,15 @@ class DyeVim( object ):
             self._windows[ wid ].OnBufferChanged( self._buffers[ bnr ] )
 
 
-    def InitializeCurrentFiletypeIfNeeded( self ):
+    def OnFileTypeChanged( self ):
+        self._InitializeCurrentFiletypeIfNeeded()
+        wid = self._GetCurrentWId()
+        bnr = vim.current.buffer.number
+        #self._windowBuffer[ wid ] = bnr
+        self._windows[ wid ].OnBufferChanged( self._buffers[ bnr ] )
+
+
+    def _InitializeCurrentFiletypeIfNeeded( self ):
         ft = vim.current.buffer.options[ 'filetype' ]
         if ft not in self._initialized_filetypes:
             try:
@@ -85,6 +95,11 @@ class DyeVim( object ):
             except:
                 pass
             self._initialized_filetypes.add( ft )
+
+
+    def _IsFileTypeSupported( self ):
+        ft = vim.current.buffer.options[ 'filetype' ]
+        return ft in DV_SUPPORTED_FILETYPES
 
 
     def _GetCurrentWId( self ):

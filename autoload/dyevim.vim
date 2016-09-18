@@ -95,7 +95,7 @@ function! s:OnBufferEnter()
 endfunction
 
 function! s:OnSetFileType()
-    exec s:py "dyevim_state.InitializeCurrentFiletypeIfNeeded()"
+    exec s:py "dyevim_state.OnFileTypeChanged()"
 endfunction
 
 function! s:SetupWheelMappings()
