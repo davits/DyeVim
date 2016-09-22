@@ -36,7 +36,7 @@ from collections import defaultdict
 
 import vim
 
-DV_SUPPORTED_FILETYPES = [ 'cpp', 'c' ]
+DV_SUPPORTED_FILETYPES = [ 'cpp' ]
 DV_UNIQUE_WID_VAR = 'DyeVimUniqueWId'
 
 class DyeVim( object ):
