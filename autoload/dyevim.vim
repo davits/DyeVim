@@ -54,6 +54,7 @@ from __future__ import division
 
 import os
 import sys
+import vim
 
 script_folder = vim.eval( 's:script_folder_path' )
 sys.path.insert( 0, os.path.join( script_folder, '../python' ) )
