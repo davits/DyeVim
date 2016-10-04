@@ -33,7 +33,7 @@ function! dyevim#ft#cpp#Setup()
     call dyevim#colors#CreateItalicVariant( 'TypeItalic', 'Type' )
     highlight link Dye_cpp_Namespace TypeItalic
     highlight link Dye_cpp_Class TypeBold
-    highlight link Dye_cpp_Struct TypeBold
+    highlight link Dye_cpp_Structure TypeBold
     highlight link Dye_cpp_Union TypeBold
     highlight link Dye_cpp_TypeAlias TypeBold
     highlight link Dye_cpp_MemberVariable FunctionBold

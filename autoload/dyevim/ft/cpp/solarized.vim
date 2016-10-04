@@ -32,7 +32,7 @@ function! dyevim#ft#cpp#solarized#Setup()
 
     hi link Dye_cpp_Namespace Namespace
     hi link Dye_cpp_Class UserType
-    hi link Dye_cpp_Struct UserType
+    hi link Dye_cpp_Structure UserType
     hi link Dye_cpp_Union UserType
     hi link Dye_cpp_TypeAlias UserType
     hi link Dye_cpp_MemberVariable MemberVar
