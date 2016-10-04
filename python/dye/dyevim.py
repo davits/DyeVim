@@ -55,6 +55,8 @@ class DyeVim( object ):
 
 
     def OnSemanticTokensReady( self, bufnr ):
+        if not self._IsFileTypeSupported():
+            return
         log.info( 'OnSemanticTokensReady buffer: {0}'.format( bufnr ) )
         if vim.current.buffer.number != bufnr:
             return
@@ -71,6 +73,8 @@ class DyeVim( object ):
 
 
     def OnBufferEnter( self ):
+        if not self._IsFileTypeSupported():
+            return
         self._InitializeCurrentFiletypeIfNeeded()
         wid = self._GetCurrentWId()
         bnr = vim.current.buffer.number
@@ -80,6 +84,8 @@ class DyeVim( object ):
 
 
     def OnFileTypeChanged( self ):
+        if not self._IsFileTypeSupported():
+            return
         self._InitializeCurrentFiletypeIfNeeded()
         wid = self._GetCurrentWId()
         bnr = vim.current.buffer.number
