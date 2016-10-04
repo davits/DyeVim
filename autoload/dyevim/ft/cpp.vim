@@ -35,14 +35,16 @@ function! dyevim#ft#cpp#Setup()
     highlight link Dye_cpp_Class TypeBold
     highlight link Dye_cpp_Struct TypeBold
     highlight link Dye_cpp_Union TypeBold
+    highlight link Dye_cpp_TypeAlias TypeBold
     highlight link Dye_cpp_MemberVariable FunctionBold
-    highlight link Dye_cpp_Typedef TypeBold
-    highlight link Dye_cpp_TemplateType TypeBold
-    highlight link Dye_cpp_Enum TypeBold
-    highlight link Dye_cpp_EnumConstant Constant
+    highlight link Dye_cpp_Variable NormalBold
+    highlight link Dye_cpp_Function Function
+    highlight link Dye_cpp_FunctionParameter NormalBold
+    highlight link Dye_cpp_Enumeration TypeBold
+    highlight link Dye_cpp_Enumerator Constant
+    highlight link Dye_cpp_TemplateParameter TypeBold
+    highlight link Dye_cpp_TemplateNonTypeParameter TypeItalic
     highlight link Dye_cpp_PreprocessingDirective Macro
     highlight link Dye_cpp_Macro Macro
-    highlight link Dye_cpp_Function Function
-    highlight link Dye_cpp_FunctionParam NormalBold
     highlight link Dye_cpp_SkippedRange cCppOutSkip
 endfunction
