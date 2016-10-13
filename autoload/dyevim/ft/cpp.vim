@@ -23,28 +23,40 @@
 function! dyevim#ft#cpp#Setup()
     try
         exec 'call dyevim#ft#cpp#' . g:colors_name . '#Setup()'
-        return
     catch
+        call dyevim#colors#CreateBoldVariant( 'NormalBold', 'Normal' )
+        call dyevim#colors#CreateBoldVariant( 'TypeBold', 'Type' )
+        call dyevim#colors#CreateBoldVariant( 'FunctionBold', 'Function' )
+        call dyevim#colors#CreateItalicVariant( 'TypeItalic', 'Type' )
+
+        hi link Namespace TypeItalic
+        hi link UserType TypeBold
+        hi link MemberVariable FunctionBold
+        hi link Variable Normal
+        hi link MemberFunction Function
+        hi link DyeFunction Function
+        hi link FunctionParameter NormalBold
+        hi link Enumerator Constant
+        hi link DyeMacro Macro
+        hi link SkippedRange cCppOutSkip
     endtry
 
-    call dyevim#colors#CreateBoldVariant( 'NormalBold', 'Normal' )
-    call dyevim#colors#CreateBoldVariant( 'TypeBold', 'Type' )
-    call dyevim#colors#CreateBoldVariant( 'FunctionBold', 'Function' )
-    call dyevim#colors#CreateItalicVariant( 'TypeItalic', 'Type' )
-    highlight link Dye_cpp_Namespace TypeItalic
-    highlight link Dye_cpp_Class TypeBold
-    highlight link Dye_cpp_Structure TypeBold
-    highlight link Dye_cpp_Union TypeBold
-    highlight link Dye_cpp_TypeAlias TypeBold
-    highlight link Dye_cpp_MemberVariable FunctionBold
-    highlight link Dye_cpp_Variable NormalBold
-    highlight link Dye_cpp_Function Function
-    highlight link Dye_cpp_FunctionParameter NormalBold
-    highlight link Dye_cpp_Enumeration TypeBold
-    highlight link Dye_cpp_Enumerator Constant
-    highlight link Dye_cpp_TemplateParameter TypeBold
-    highlight link Dye_cpp_TemplateNonTypeParameter TypeItalic
-    highlight link Dye_cpp_PreprocessingDirective Macro
-    highlight link Dye_cpp_Macro Macro
-    highlight link Dye_cpp_SkippedRange cCppOutSkip
+    hi link Dye_cpp_Namespace Namespace
+    hi link Dye_cpp_Class UserType
+    hi link Dye_cpp_Structure UserType
+    hi link Dye_cpp_Union UserType
+    hi link Dye_cpp_TypeAlias UserType
+    hi link Dye_cpp_MemberVariable MemberVariable
+    hi link Dye_cpp_Variable Variable
+    hi link Dye_cpp_MemberFunction MemberFunction
+    hi link Dye_cpp_Function DyeFunction
+    hi link Dye_cpp_FunctionParameter FunctionParameter
+    hi link Dye_cpp_Enumeration UserType
+    hi link Dye_cpp_Enumerator Enumerator
+    hi link Dye_cpp_TemplateParameter UserType
+    hi link Dye_cpp_TemplateNonTypeParameter FunctionParameter
+    hi link Dye_cpp_PreprocessingDirective DyeMacro
+    hi link Dye_cpp_Macro DyeMacro
+    hi link Dye_cpp_SkippedRange SkippedRange
+
 endfunction

@@ -21,29 +21,15 @@
 " SOFTWARE.
 
 function! dyevim#ft#cpp#solarized#Setup()
-    "throw 'Not implemented'
     "TODO add terminal support
-    hi UserType guifg=#c17100
     hi Namespace guifg=#c17100 gui=italic
-    hi MemberVar guifg=#6c71c4
+    hi UserType guifg=#c17100
+    hi MemberVariable guifg=#6c71c4
     hi Variable guifg=#93a1a1 gui=italic
-    hi FunctionParam guifg=#93a1a1 gui=bold
+    hi link MemberFunction Function
+    hi link DyeFunction Function
+    hi FunctionParameter guifg=#93a1a1 gui=bold
+    hi link Enumerator Constant
+    hi link DyeMacro Macro
     hi SkippedRange guifg=#657b83
-
-    hi link Dye_cpp_Namespace Namespace
-    hi link Dye_cpp_Class UserType
-    hi link Dye_cpp_Structure UserType
-    hi link Dye_cpp_Union UserType
-    hi link Dye_cpp_TypeAlias UserType
-    hi link Dye_cpp_MemberVariable MemberVar
-    hi link Dye_cpp_Variable Variable
-    hi link Dye_cpp_Function Function
-    hi link Dye_cpp_FunctionParameter FunctionParam
-    hi link Dye_cpp_Enumeration UserType
-    hi link Dye_cpp_Enumerator Constant
-    hi link Dye_cpp_TemplateParameter UserType
-    hi link Dye_cpp_TemplateNonTypeParameter FunctionParam
-    hi link Dye_cpp_PreprocessingDirective Macro
-    hi link Dye_cpp_Macro Macro
-    hi link Dye_cpp_SkippedRange SkippedRange
 endfunction

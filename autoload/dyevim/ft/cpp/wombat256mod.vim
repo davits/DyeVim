@@ -21,29 +21,15 @@
 " SOFTWARE.
 
 function! dyevim#ft#cpp#wombat256mod#Setup()
-    "throw 'Not implemented'
     "TODO add terminal support
-    hi UserType guifg=#e0c477
     hi Namespace guifg=#e0c477 gui=italic
-    hi MemberVar guifg=#98c845
+    hi UserType guifg=#e0c477
+    hi MemberVariable guifg=#98c845
     hi Variable guifg=#e3e0d7 gui=italic
+    hi link MemberFunction Function
+    hi link DyeFunction Function
     hi FunctionParam guifg=#e3e0d7 gui=bold
+    hi link Enumerator Constant
+    hi link DyeMacro Macro
     hi SkippedRange guifg=#9c998e
-
-    hi link Dye_cpp_Namespace Namespace
-    hi link Dye_cpp_Class UserType
-    hi link Dye_cpp_Structure UserType
-    hi link Dye_cpp_Union UserType
-    hi link Dye_cpp_TypeAlias UserType
-    hi link Dye_cpp_MemberVariable MemberVar
-    hi link Dye_cpp_Variable Variable
-    hi link Dye_cpp_Function Function
-    hi link Dye_cpp_FunctionParameter FunctionParam
-    hi link Dye_cpp_Enumeration UserType
-    hi link Dye_cpp_Enumerator Constant
-    hi link Dye_cpp_TemplateParameter UserType
-    hi link Dye_cpp_TemplateNonTypeParameter FunctionParam
-    hi link Dye_cpp_PreprocessingDirective Macro
-    hi link Dye_cpp_Macro Macro
-    hi link Dye_cpp_SkippedRange SkippedRange
 endfunction
