@@ -36,7 +36,7 @@ from collections import defaultdict
 
 import vim
 
-DV_SUPPORTED_FILETYPES = [ 'cpp' ]
+DV_SUPPORTED_FILETYPES = set( [ 'cpp' ] )
 DV_UNIQUE_WID_VAR = 'DyeVimUniqueWId'
 
 class DyeVim( object ):
@@ -73,10 +73,11 @@ class DyeVim( object ):
 
 
     def OnBufferEnter( self ):
+        wid = self._GetCurrentWId()
         if not self._IsFileTypeSupported():
+            self._windows[ wid ].ClearWindow()
             return
         self._InitializeCurrentFiletypeIfNeeded()
-        wid = self._GetCurrentWId()
         bnr = vim.current.buffer.number
         if self._windowBuffer[ wid ] != bnr:
             self._windowBuffer[ wid ] = bnr
@@ -84,7 +85,9 @@ class DyeVim( object ):
 
 
     def OnFileTypeChanged( self ):
+        wid = self._GetCurrentWId()
         if not self._IsFileTypeSupported():
+            self._windows[ wid ].ClearWindow()
             return
         self._InitializeCurrentFiletypeIfNeeded()
         wid = self._GetCurrentWId()
@@ -109,7 +112,10 @@ class DyeVim( object ):
 
 
     def _GetCurrentWId( self ):
-        return vim.current.window.vars[ DV_UNIQUE_WID_VAR ]
+        try:
+            return vim.current.window.vars[ DV_UNIQUE_WID_VAR ]
+        except:
+            return 0
 
 
     def _SetCurrentWId( self ):

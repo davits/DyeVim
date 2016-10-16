@@ -25,8 +25,10 @@ function! dyevim#ft#cpp#solarized#Setup()
     hi Namespace guifg=#c17100 gui=italic
     hi UserType guifg=#c17100
     hi MemberVariable guifg=#6c71c4
+    hi StaticMemberVariable guifg=#6c71c4 gui=italic
     hi Variable guifg=#93a1a1 gui=italic
-    hi link MemberFunction Function
+    hi MemberFunction guifg=#268bd2
+    hi StaticMemberFunction guifg=#268bd2 gui=italic
     hi link DyeFunction Function
     hi FunctionParameter guifg=#93a1a1 gui=bold
     hi link Enumerator Constant

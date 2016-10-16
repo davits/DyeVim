@@ -32,8 +32,10 @@ function! dyevim#ft#cpp#Setup()
         hi link Namespace TypeItalic
         hi link UserType TypeBold
         hi link MemberVariable FunctionBold
+        hi link StaticMemberVariable FunctionBold
         hi link Variable Normal
         hi link MemberFunction Function
+        hi link StaticMemberFunction Function
         hi link DyeFunction Function
         hi link FunctionParameter NormalBold
         hi link Enumerator Constant
@@ -47,8 +49,10 @@ function! dyevim#ft#cpp#Setup()
     hi link Dye_cpp_Union UserType
     hi link Dye_cpp_TypeAlias UserType
     hi link Dye_cpp_MemberVariable MemberVariable
+    hi link Dye_cpp_StaticMemberVariable StaticMemberVariable
     hi link Dye_cpp_Variable Variable
     hi link Dye_cpp_MemberFunction MemberFunction
+    hi link Dye_cpp_StaticMemberFunction StaticMemberFunction
     hi link Dye_cpp_Function DyeFunction
     hi link Dye_cpp_FunctionParameter FunctionParameter
     hi link Dye_cpp_Enumeration UserType

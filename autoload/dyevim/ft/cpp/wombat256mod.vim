@@ -25,10 +25,12 @@ function! dyevim#ft#cpp#wombat256mod#Setup()
     hi Namespace guifg=#e0c477 gui=italic
     hi UserType guifg=#e0c477
     hi MemberVariable guifg=#98c845
+    hi StaticMemberVariable guifg=#98c845 gui=italic
     hi Variable guifg=#e3e0d7 gui=italic
-    hi link MemberFunction Function
+    hi MemberFunction guifg=#cae982
+    hi StaticMemberFunction guifg=#cae982 gui=italic
     hi link DyeFunction Function
-    hi FunctionParam guifg=#e3e0d7 gui=bold
+    hi FunctionParameter guifg=#e3e0d7 gui=bold
     hi link Enumerator Constant
     hi link DyeMacro Macro
     hi SkippedRange guifg=#9c998e

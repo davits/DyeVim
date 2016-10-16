@@ -49,6 +49,10 @@ class Window( object ):
         self._CreateMatchesForViewport( self._viewport )
 
 
+    def ClearWindow( self ):
+        self._RemoveMatchesFromViewport( self._viewport )
+
+
     def _CreateMatchesForViewport( self, view ):
         for token in self._buffer.GetTokens( view ):
             token.AddMatch( self._wid )
