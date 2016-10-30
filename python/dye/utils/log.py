@@ -27,19 +27,48 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 
-from .interval import Interval
-
-import vim
-
-class Viewport(object):
-
-    @staticmethod
-    def Current():
-        begin = int( vim.eval( 'line("w0")' ) )
-        end = int( vim.eval( 'line("w$")' ) )
-        return Interval( begin, end )
+import logging
 
 
-    @staticmethod
-    def Size():
-        return vim.current.window.height
+def InitLogging( level = None ):
+
+    logging_level = None
+    if level == 'info':
+        logging_level = logging.INFO
+    elif level == 'debug':
+        logging_level = logging.DEBUG
+
+    if not logging_level:
+        return
+
+    global info, debug
+    info = _info
+    if logging_level == logging.DEBUG:
+        debug = _debug
+
+    logger = logging.getLogger( 'dyevim' )
+    logger.setLevel( logging_level )
+
+    fh = logging.FileHandler( 'dyevim.log' )
+    fh.setLevel( logging_level )
+    logger.addHandler( fh )
+
+
+def debug( *args ):
+    pass
+
+
+def info( *args ):
+    pass
+
+
+def _get():
+    return logging.getLogger( 'dyevim' )
+
+
+def _debug( *args ):
+    _get().debug( *args )
+
+
+def _info( *args ):
+    _get().info( *args )

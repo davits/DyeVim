@@ -27,8 +27,8 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 
-from dye.interval import Interval
-from dye.interval_set import IntervalSet
+from dye.interval.interval import Interval
+from dye.interval.interval_set import IntervalSet
 
 from nose.tools import eq_, ok_, raises
 
@@ -36,7 +36,7 @@ from nose.tools import eq_, ok_, raises
 def String_test():
     # 100% coverity baby
     eq_( "%s" % IntervalSet( Interval( 1, 10 ), Interval( 20, 30 ) ),
-         "IntervalSet: (Interval: [1, 10], Interval: [20, 30])" )
+         "([1, 10], [20, 30])" )
 
 
 def Construction_test():
@@ -108,6 +108,9 @@ def Union_test():
 
 
 def Intersect_test():
+    s = IntervalSet()
+    eq_( s & Interval( 1, 10 ), IntervalSet() )
+
     s = IntervalSet( Interval( 1, 10 ), Interval( 20, 30 ), Interval( 40, 50 ) )
 
     eq_( s & Interval( 11, 19 ), IntervalSet() )

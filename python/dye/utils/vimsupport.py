@@ -27,47 +27,47 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 
-import logging
+import vim
 
 
-def InitLogging( level = None ):
-
-    logging_level = None
-    if level == 'info':
-        logging_level = logging.INFO
-    elif level == 'debug':
-        logging_level = logging.DEBUG
-
-    if not logging_level:
-        return
-
-    global info, debug
-    info = _info
-    debug = _debug
-
-    logger = logging.getLogger( 'dyevim' )
-    logger.setLevel( logging_level )
-
-    fh = logging.FileHandler( 'dyevim.log' )
-    fh.setLevel( logging_level )
-    logger.addHandler( fh )
+def GetCurrentBufferNumber():
+    return vim.current.buffer.number
 
 
-def debug( *args ):
-    pass
+def BufNumberToName( bufnr ):
+    return vim.eval( 'bufname({0})'.format( bufnr ) )
 
 
-def info( *args ):
-    pass
+def GetCurrentTopLine():
+    return int( vim.eval( 'line("w0")' ) )
 
 
-def _get():
-    return logging.getLogger( 'dyevim' )
+def GetCurrentBottomLine():
+    return int( vim.eval( 'line("w$")' ) )
 
 
-def _debug( *args ):
-    _get().debug( *args )
+def GetCurrentWindowHeight():
+    return vim.current.window.height
 
 
-def _info( *args ):
-    _get().info( *args )
+def GetFileType( bufnr ):
+    return vim.buffers[ bufnr ].options[ 'filetype' ]
+
+
+def GetBufferLen( bufnr ):
+    return len( vim.buffers[ bufnr ] )
+
+
+def GetLineLen( bufnr, line ):
+    # line index is 1 based, but vim python interface is 0 based
+    return len( vim.buffers[ bufnr ][ line - 1 ] )
+
+
+def PostVimWarning( message ):
+    # Displaying a new message while previous ones are still on the status line
+    # might lead to a hit-enter prompt or the message appearing without a
+    # newline so we do a redraw first.
+    vim.command( 'redraw' )
+    vim.command( 'echohl WarningMsg' )
+    vim.command( "echom '{1}'".format( message ) )
+    vim.command( 'echohl None' )

@@ -27,61 +27,63 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 
-from .viewport import Viewport
+from .utils import log, viewport
 
 class Window( object ):
 
     def __init__( self, wid, buffer ):
         self._wid = wid
         self._buffer = buffer
-        self._viewport = Viewport.Current()
+        self._viewport = viewport.Current()
 
 
     def OnUpdateTokens( self ):
-        self._RemoveMatchesFromViewport( self._viewport )
+        self._RemoveMatchesFromInterval( self._viewport )
         self._buffer.Reset()
-        self._CreateMatchesForViewport( self._viewport )
+        self._CreateMatchesForInterval( self._viewport )
 
 
     def OnBufferChanged( self, buffer ):
-        self._RemoveMatchesFromViewport( self._viewport )
+        self._RemoveMatchesFromInterval( self._viewport )
         self._buffer = buffer
-        self._CreateMatchesForViewport( self._viewport )
+        self._CreateMatchesForInterval( self._viewport )
 
 
     def ClearWindow( self ):
-        self._RemoveMatchesFromViewport( self._viewport )
+        self._RemoveMatchesFromInterval( self._viewport )
 
 
-    def _CreateMatchesForViewport( self, view ):
-        for token in self._buffer.GetTokens( view ):
-            token.AddMatch( self._wid )
-
+    def _CreateMatchesForInterval( self, view ):
         for sr in self._buffer.GetSkippedRanges( view ):
             sr.AddMatch( self._wid )
 
+        for token in self._buffer.GetTokens( view ):
+            token.AddMatch( self._wid )
 
-    def _RemoveMatchesFromViewport( self, view ):
-        for token in self._buffer.GetTokens( view, False ):
-            token.RemoveMatch( self._wid )
 
+    def _RemoveMatchesFromInterval( self, view ):
         for sr in self._buffer.GetSkippedRanges( view, False ):
             sr.RemoveMatch( self._wid )
 
+        for token in self._buffer.GetTokens( view, False ):
+            token.RemoveMatch( self._wid )
+
 
     def OnCursorMoved( self ):
-        current = Viewport.Current()
+        current = viewport.Current()
         if self._viewport != current:
             self.OnViewportChanged( current )
 
 
     def OnViewportChanged( self, current ):
+        log.debug( "Viewport Changed {0} -> {1}"
+                   .format( self._viewport, current ) )
         remove_views = self._viewport - current
         for view in remove_views:
-            self._RemoveMatchesFromViewport( view )
+            self._RemoveMatchesFromInterval( view )
 
         apply_views = current - self._viewport
         for view in apply_views:
-            self._CreateMatchesForViewport( view )
+            self._CreateMatchesForInterval( view )
 
         self._viewport = current

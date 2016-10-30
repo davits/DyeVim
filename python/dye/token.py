@@ -27,42 +27,36 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 
-from .range import Range
-
 import vim
 
 class Token( object ):
 
     @staticmethod
-    def CreateTokens( file_type, token_type, range_dict ):
-        r = Range( range_dict )
+    def CreateTokens( file_type, token_type, tr, priority = -1 ):
+        if tr.SingleLine():
+            return [ Token( file_type, token_type, priority,
+                            tr.start.line, tr.start.column, tr.Offset() ) ]
 
-        if r.OneLine():
-            return [
-                     Token( file_type, token_type,
-                            r.start.line, r.start.column, r.Offset() )
-                   ]
+        tokens = [ Token( file_type, token_type, priority,
+                          tr.start.line, tr.start.column ) ]
 
-        tokens = []
-        tokens.append( Token( file_type, token_type,
-                              r.start.line, r.start.column ) )
+        for line in range( tr.start.line + 1, tr.end.line ):
+            tokens.append( Token( file_type, token_type, priority, line ) )
 
-        for line in range( r.start.line + 1, r.end.line ):
-            tokens.append( Token( file_type, token_type, line ) )
-
-        tokens.append( Token( file_type, token_type,
-                              r.end.line, 1, r.end.column - 1 ) )
+        tokens.append( Token( file_type, token_type, priority,
+                              tr.end.line, 1, tr.end.column - 1 ) )
         return tokens
 
 
-    def __init__( self, file_type, token_type,
+    def __init__( self, file_type, token_type, priority,
                   line, column = None, offset = None):
 
         group = 'Dye_{0}_{1}'.format( file_type, token_type )
 
         self.line = line
         self._matchIds = {}
-        self._create = self._GetTokenCreateStr( group, line, column, offset )
+        self._create = self._GetTokenCreateStr( group, priority,
+                                                line, column, offset )
 
 
     def __lt__( self, line ):
@@ -73,17 +67,23 @@ class Token( object ):
         return self.line > line
 
 
-    def _GetTokenCreateStr( self, group, line, column, offset ):
+    def _GetTokenCreateStr( self, group, priority, line, column, offset ):
         if offset is not None:
-            return ( 'matchaddpos("{0}", [[{1}, {2}, {3}]], -1)'
-                     .format( group, line, column, offset ) )
+            return ( 'matchaddpos("{0}", [[{1}, {2}, {3}]], {4})'
+                     .format( group, line, column, offset, priority ) )
 
         if column is not None:
             regex = '\%{0}l\%>{1}c'.format( line, column - 1 )
-        else:
-            regex = '\%{0}l'.format( line )
+            return ( 'matchadd("{0}", \'{1}\', {2})'
+                     .format( group, regex, priority ) )
 
-        return 'matchadd("{0}", \'{1}\', -1)'.format( group, regex )
+        return ( 'matchaddpos("{0}", [[{1}]], {2})'
+                 .format( group, line, priority ) )
+
+
+
+    def __repr__( self ):
+        return "Token {0}".format( self._range )
 
 
     def AddMatch( self, wid ):

@@ -27,14 +27,13 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 
-from .interval_set import IntervalSet
-from .viewport import Viewport
+from .interval.interval import Interval
+from .interval.interval_set import IntervalSet
 from .token import Token
-from . import log
+from .utils import log, viewport, vimsupport
+from .utils.range import Range
 
 import bisect
-
-import vim
 
 class Buffer( object ):
 
@@ -42,7 +41,8 @@ class Buffer( object ):
         self.number = bufnr
         self._ycm = ycm
         self._tokens = []
-        self._covered = IntervalSet(  )
+        self._covered = IntervalSet()
+        self._skipped_ranges = IntervalSet()
         self._sr_tokens = [] # Tokens for skipped ranges
         self._sr_queried = False
 
@@ -50,6 +50,7 @@ class Buffer( object ):
     def Reset( self ):
         self._tokens = []
         self._covered = IntervalSet()
+        self._skipped_ranges = IntervalSet()
         self._sr_tokens = []
         self._sr_queried = False
 
@@ -61,9 +62,9 @@ class Buffer( object ):
             return self._GetIntervalTokens( self._tokens, interval )
 
         query_intervals = self._covered.GetIntervalForQuery( interval,
-                                                             Viewport.Size() )
+                                                             viewport.Size() )
         for qi in query_intervals:
-            qi.LimitBottomBy( self._GetBufferSize() )
+            qi.LimitBottomBy( vimsupport.GetBufferLen( self.number ) )
             self._QueryTokensAndStore( qi )
 
         return self._GetIntervalTokens( self._tokens, interval )
@@ -86,15 +87,19 @@ class Buffer( object ):
         skipped_ranges = self._ycm.GetSkippedRanges( self.number, 0.01 )
 
         if not isinstance( skipped_ranges, list ):
+            log.debug( "Query Error {0}".format( skipped_ranges ) )
             if skipped_ranges == 'Timeout':
-                # message
-                pass
+                bufName = vimsupport.BufNumberToName( self.number )
+                vimsupport.PostVimWarning( "Skipped range query timeout for "
+                                           "buffer {0}".format( bufName ) )
             return
 
-        ft = self._GetFileType()
+        ft = vimsupport.GetFileType( self.number )
         tokens = []
-        for sr in skipped_ranges:
-            tokens.extend( Token.CreateTokens( ft, 'SkippedRange', sr ) )
+        for sr_dict in skipped_ranges:
+            sr = Range( sr_dict )
+            self._skipped_ranges |= Interval( sr.start.line, sr.end.line )
+            tokens.extend( Token.CreateTokens( ft, 'SkippedRange', sr, 11 ) )
 
         self._sr_tokens = tokens
         self._sr_queried = True
@@ -111,29 +116,39 @@ class Buffer( object ):
 
     def _QueryTokens( self, interval ):
         log.info( 'Querying tokens for buffer {0}, interval {1}'
-                    .format( self.number, interval ) )
-        end_col = self._GetLineSize( interval.end - 1 )
+                   .format( self.number, interval ) )
+
+        end_col = vimsupport.GetLineLen( self.number, interval.end ) + 1
         token_dicts = self._ycm.GetSemanticTokens( self.number,
                                                    interval.begin, 1,
                                                    interval.end, end_col,
                                                    0.01 )
         if not isinstance( token_dicts, list ):
+            log.debug( "Query Error {0}".format( token_dicts ) )
             if token_dicts == 'Timeout':
-                # message
-                pass
+                bufName = vimsupport.BufNumberToName( self.number )
+                vimsupport.PostVimWarning( "Token query timeout for buffer "
+                                           "{0} interval {1}"
+                                           .format( bufName, interval ) )
             return False
 
-        ft = self._GetFileType()
+        ft = vimsupport.GetFileType( self.number )
         tokens = []
         for td in token_dicts:
             tk = td[ 'kind' ]
             tt = td[ 'type' ]
             if tk == 'Identifier' and tt != 'Unsupported':
-                tr = td[ 'range' ]
+                tr = Range( td[ 'range' ] )
                 tokens.extend( Token.CreateTokens( ft, tt, tr ) )
 
         # Sometimes clang may return tokens on neighboring lines.
-        return self._GetIntervalTokens( tokens, interval )
+        tokens = self._GetIntervalTokens( tokens, interval )
+        # Remove tokens on skipped ranges lines
+        for r in ( interval & self._skipped_ranges ):
+            ( b, e ) = self._Bisect( tokens, r )
+            del tokens[ b : e ]
+
+        return tokens
 
 
     def _GetIntervalTokens( self, tokens, interval ):
@@ -145,15 +160,3 @@ class Buffer( object ):
         b = bisect.bisect_left( tokens, interval.begin )
         e = bisect.bisect_right( tokens, interval.end )
         return ( b, e )
-
-
-    def _GetFileType( self ):
-        return vim.buffers[ self.number ].options[ 'filetype' ]
-
-
-    def _GetBufferSize( self ):
-        return len( vim.buffers[ self.number ] )
-
-
-    def _GetLineSize( self, line ):
-        return len( vim.buffers[ self.number ][ line ] ) + 1

@@ -40,7 +40,7 @@ class IntervalSet( object ):
 
 
     def __repr__( self ):
-        return "IntervalSet: {0}".format( tuple( self._intervals ) )
+        return str( tuple( self._intervals ) )
 
 
     def __eq__( self, other ):

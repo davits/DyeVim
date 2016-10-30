@@ -29,8 +29,8 @@ from __future__ import division
 
 from .buffer import Buffer
 from .window import Window
-from .dict import Dict
-from . import log
+from .utils import log
+from .utils.dict import Dict
 
 from collections import defaultdict
 
@@ -42,7 +42,6 @@ DV_UNIQUE_WID_VAR = 'DyeVimUniqueWId'
 class DyeVim( object ):
     def __init__( self, ycm ):
         #log.InitLogging('debug')
-        log.InitLogging()
         ycm.RegisterFileParseReadyCallback( self.OnSemanticTokensReady )
         self._ycm = ycm
         self._buffers = Dict( lambda bufnr: Buffer( bufnr, self._ycm ) )
@@ -51,7 +50,6 @@ class DyeVim( object ):
         self._windowBuffer = defaultdict( int )
         self._initialized_filetypes = set()
         self._nextUniqueWId = 1
-        self._enteringWindow = False
 
 
     def OnSemanticTokensReady( self, bufnr ):
@@ -92,7 +90,6 @@ class DyeVim( object ):
         self._InitializeCurrentFiletypeIfNeeded()
         wid = self._GetCurrentWId()
         bnr = vim.current.buffer.number
-        #self._windowBuffer[ wid ] = bnr
         self._windows[ wid ].OnBufferChanged( self._buffers[ bnr ] )
 
 

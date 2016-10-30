@@ -39,7 +39,7 @@ class Interval( object ):
 
 
     def __repr__(self):
-        return "Interval: [{0}, {1}]".format(self.begin, self.end)
+        return '[{0}, {1}]'.format( self.begin, self.end )
 
 
     def __eq__( self, other ):
@@ -52,13 +52,13 @@ class Interval( object ):
 
 
     def __lt__( self, other ):
-        if isinstance( other, int ):
+        if isinstance( other, ( int, long ) ):
             return self.end < other
         return self.end < other.begin
 
 
     def __gt__( self, other ):
-        if isinstance( other, int ):
+        if isinstance( other, ( int, long ) ):
             return self.begin > other
         return self.begin > other.end
 
@@ -168,6 +168,10 @@ class Interval( object ):
 
     def Precedes( self, other ):
         return self.end + 1 == other.begin
+
+
+    def SingleLine( self ):
+        return self.begin == self.end
 
 
     def EnlargeTopTo( self, size ):

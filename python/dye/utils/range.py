@@ -28,7 +28,7 @@ from __future__ import print_function
 from __future__ import division
 
 
-class Cursor( object ):
+class Location( object ):
 
     def __init__( self, cursor_dict ):
         self.line = cursor_dict[ 'line_num' ]
@@ -38,11 +38,11 @@ class Cursor( object ):
 class Range( object ):
 
     def __init__( self, range_dict ):
-        self.start = Cursor( range_dict[ 'start' ] )
-        self.end = Cursor( range_dict[ 'end' ] )
+        self.start = Location( range_dict[ 'start' ] )
+        self.end = Location( range_dict[ 'end' ] )
 
 
-    def OneLine( self ):
+    def SingleLine( self ):
         return self.start.line == self.end.line
 
 
