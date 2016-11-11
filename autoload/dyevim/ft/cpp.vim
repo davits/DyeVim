@@ -25,6 +25,7 @@ function! dyevim#ft#cpp#Setup()
         exec 'call dyevim#ft#cpp#' . g:colors_name . '#Setup()'
     catch
         call dyevim#colors#CreateBoldVariant( 'NormalBold', 'Normal' )
+        call dyevim#colors#CreateItalicVariant( 'NormalItalic', 'Normal' )
         call dyevim#colors#CreateBoldVariant( 'TypeBold', 'Type' )
         call dyevim#colors#CreateBoldVariant( 'FunctionBold', 'Function' )
         call dyevim#colors#CreateItalicVariant( 'TypeItalic', 'Type' )
@@ -33,6 +34,7 @@ function! dyevim#ft#cpp#Setup()
         hi link UserType TypeBold
         hi link MemberVariable FunctionBold
         hi link StaticMemberVariable FunctionBold
+        hi link GlobalVariable NormalItalic
         hi link Variable Normal
         hi link MemberFunction Function
         hi link StaticMemberFunction Function
@@ -50,6 +52,7 @@ function! dyevim#ft#cpp#Setup()
     hi link Dye_cpp_TypeAlias UserType
     hi link Dye_cpp_MemberVariable MemberVariable
     hi link Dye_cpp_StaticMemberVariable StaticMemberVariable
+    hi link Dye_cpp_GlobalVariable GlobalVariable
     hi link Dye_cpp_Variable Variable
     hi link Dye_cpp_MemberFunction MemberFunction
     hi link Dye_cpp_StaticMemberFunction StaticMemberFunction

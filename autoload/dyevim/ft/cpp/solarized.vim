@@ -26,7 +26,8 @@ function! dyevim#ft#cpp#solarized#Setup()
     hi UserType guifg=#c17100
     hi MemberVariable guifg=#6c71c4
     hi StaticMemberVariable guifg=#6c71c4 gui=italic
-    hi Variable guifg=#93a1a1 gui=italic
+    hi GlobalVariable guifg=#93a1a1 gui=italic
+    hi Variable guifg=#93a1a1
     hi MemberFunction guifg=#268bd2
     hi StaticMemberFunction guifg=#268bd2 gui=italic
     hi link DyeFunction Function

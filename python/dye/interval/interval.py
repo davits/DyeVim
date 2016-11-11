@@ -52,13 +52,13 @@ class Interval( object ):
 
 
     def __lt__( self, other ):
-        if isinstance( other, ( int, long ) ):
+        if isinstance( other, int ):
             return self.end < other
         return self.end < other.begin
 
 
     def __gt__( self, other ):
-        if isinstance( other, ( int, long ) ):
+        if isinstance( other, int ):
             return self.begin > other
         return self.begin > other.end
 

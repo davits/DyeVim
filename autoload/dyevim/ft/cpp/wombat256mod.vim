@@ -26,7 +26,8 @@ function! dyevim#ft#cpp#wombat256mod#Setup()
     hi UserType guifg=#e0c477
     hi MemberVariable guifg=#98c845
     hi StaticMemberVariable guifg=#98c845 gui=italic
-    hi Variable guifg=#e3e0d7 gui=italic
+    hi GlobalVariable guifg=#e3e0d7 gui=italic
+    hi Variable guifg=#e3e0d7
     hi MemberFunction guifg=#cae982
     hi StaticMemberFunction guifg=#cae982 gui=italic
     hi link DyeFunction Function

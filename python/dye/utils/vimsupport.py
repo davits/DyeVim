@@ -47,7 +47,7 @@ def GetCurrentBottomLine():
 
 
 def GetCurrentWindowHeight():
-    return vim.current.window.height
+    return int( vim.current.window.height )
 
 
 def GetFileType( bufnr ):
@@ -69,5 +69,5 @@ def PostVimWarning( message ):
     # newline so we do a redraw first.
     vim.command( 'redraw' )
     vim.command( 'echohl WarningMsg' )
-    vim.command( "echom '{1}'".format( message ) )
+    vim.command( "echom '{0}'".format( message ) )
     vim.command( 'echohl None' )
