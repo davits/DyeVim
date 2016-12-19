@@ -7,8 +7,9 @@ DyeVim: C++ semantic highlighting for Vim
 
 This plugin brings semantic highlighting into Vim.
 Once you have seen your code in color you will never go back to black&white.
-Picture worth a thousand words:
-![DyeVim Demo](http://i.imgur.com/3tzV3tP.png)
+Pictures worth a thousand words:
+![DyeVim Demo](http://i.imgur.com/ASQnHS0.png)
+![DyeVim Demo Token](http://i.imgur.com/kGhMXab.png)
 
 ### Possibilities
 Currently it can differentiate and higlight the following C++ idioms:
