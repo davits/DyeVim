@@ -45,6 +45,8 @@ class Buffer( object ):
         self._skipped_ranges = IntervalSet()
         self._sr_tokens = [] # Tokens for skipped ranges
         self._sr_queried = False
+        # TODO move into separate options with second option
+        self._timeout = vimsupport.GetIntValue( 'g:dyevim_timeout' ) / 1000
 
 
     def Reset( self ):
@@ -84,7 +86,8 @@ class Buffer( object ):
     def _QuerySkippedRanges( self ):
         log.info( 'Querying skipped ranges for buffer {0}'
                   .format( self.number ) )
-        skipped_ranges = self._ycm.GetSkippedRanges( self.number, 0.01 )
+        skipped_ranges = self._ycm.GetSkippedRanges( self.number,
+                                                     self._timeout )
 
         if not isinstance( skipped_ranges, list ):
             log.debug( "Query Error {0}".format( skipped_ranges ) )
@@ -122,7 +125,7 @@ class Buffer( object ):
         token_dicts = self._ycm.GetSemanticTokens( self.number,
                                                    interval.begin, 1,
                                                    interval.end, end_col,
-                                                   0.01 )
+                                                   self._timeout )
         if not isinstance( token_dicts, list ):
             log.debug( "Query Error {0}".format( token_dicts ) )
             if token_dicts == 'Timeout':

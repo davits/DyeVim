@@ -63,6 +63,10 @@ def GetLineLen( bufnr, line ):
     return len( vim.buffers[ bufnr ][ line - 1 ] )
 
 
+def GetIntValue( name ):
+    return int( vim.eval( name ) )
+
+
 def PostVimWarning( message ):
     # Displaying a new message while previous ones are still on the status line
     # might lead to a hit-enter prompt or the message appearing without a

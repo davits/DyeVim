@@ -56,6 +56,8 @@ endif
 
 let g:loaded_dyevim = 1
 
+let g:dyevim_timeout = get( g:, 'dyevim_timeout', 10 )
+
 " On-demand loading. Let's use the autoload folder and not slow down vim's
 " startup procedure.
 augroup dyeVimdye
