@@ -7,9 +7,10 @@ DyeVim: C++ semantic highlighting for Vim
 
 This plugin brings semantic highlighting into Vim.
 Once you have seen your code in color you will never go back to black&white.
+
 Pictures worth a thousand words:
-![DyeVim Demo](http://i.imgur.com/ASQnHS0.png)
-![DyeVim Demo Token](http://i.imgur.com/kGhMXab.png)
+![DyeVim Demo](http://i.imgur.com/ASQnHS0.png?1)
+![DyeVim Demo Token](http://i.imgur.com/kGhMXab.png?1)
 
 ### Possibilities
 Currently it can differentiate and higlight the following C++ idioms:
@@ -24,10 +25,10 @@ Currently it can differentiate and higlight the following C++ idioms:
     Macro, PreprocessingDirective
 
 It also greys out the skipped ranges between #ifdef...#endif preprocessing directives.
-![Skipped Ranges](http://i.imgur.com/049354Y.png)
+![Skipped Ranges](http://i.imgur.com/049354Y.png?1)
 
 ### How it works
-Semantic tokens are provided by the [clang](http://clang.llvm.org/) extracted by the [ycmd](https://github.com/davits/ycmd) and obtained via [YouCompleteMe](https://github.com/davits/YouCompleteMe) plugin's frontend API, so in order to work DyeVim requires YouCompleteMe plugin to be installed.
+Semantic tokens are provided by the [clang](http://clang.llvm.org/), extracted by the [ycmd](https://github.com/davits/ycmd) and obtained via [YouCompleteMe](https://github.com/davits/YouCompleteMe) plugin's frontend API, so in order to work DyeVim requires YouCompleteMe plugin to be installed.
 
 Currently I am maintaining my own forks for [ycmd](https://github.com/davits/ycmd) and [YouCompleteMe](https://github.com/davits/YouCompleteMe) with changes required for the semantic tokens to work, but I hope that in time these changes will be merged back.
 
