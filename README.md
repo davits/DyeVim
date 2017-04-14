@@ -1,6 +1,8 @@
 DyeVim: C++ semantic highlighting for Vim
 =========================================
 
+[![Join the chat at https://gitter.im/DyeVim/Lobby](https://badges.gitter.im/DyeVim/Lobby.svg)](https://gitter.im/DyeVim/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/davits/DyeVim.svg?branch=master)](https://travis-ci.org/davits/DyeVim)
 [![codecov](https://codecov.io/gh/davits/DyeVim/branch/master/graph/badge.svg)](https://codecov.io/gh/davits/DyeVim)
 
