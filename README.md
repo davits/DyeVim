@@ -9,7 +9,7 @@ Pictures worth a thousand words:
 ![DyeVim Demo](http://i.imgur.com/ASQnHS0.png?1)
 ![DyeVim Demo Token](http://i.imgur.com/kGhMXab.png?1)
 
-Possibilities
+Features
 -------------
 
 Currently it can differentiate and higlight the following C++ idioms:
@@ -52,12 +52,12 @@ If you are using Vundle:
     Plugin davits/YouCompleteMe
     Plugin davits/DyeVim
 
-Currently only 2 colorschemes are supported: wombat256mod and solarized.
+Currently only 2 colorschemes are supported: solarized and wombat256mod.
 If your colorscheme is not supported DyeVim will try its best to highlight
 your code by adding bold and italic modifiers to the existing colors.
 
 You can also place your own coloring scheme in the autoload/dyevim/ft/cpp
-directory named your_colorscheme.vim (see existing ones as an example).
+directory, named your_colorscheme.vim (see existing ones as an example).
 
 Options
 -------
