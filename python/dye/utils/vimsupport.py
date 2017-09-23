@@ -50,8 +50,13 @@ def GetCurrentWindowHeight():
     return int( vim.current.window.height )
 
 
+def GetCurrentFileType():
+    return _ToUnicode( vim.current.buffer.options[ 'filetype' ] )
+
+
 def GetFileType( bufnr ):
-    return vim.buffers[ bufnr ].options[ 'filetype' ]
+    ft = vim.buffers[ bufnr ].options[ 'filetype' ]
+    return _ToUnicode( ft )
 
 
 def GetBufferLen( bufnr ):
@@ -75,3 +80,14 @@ def PostVimWarning( message ):
     vim.command( 'echohl WarningMsg' )
     vim.command( "echom '{0}'".format( message ) )
     vim.command( 'echohl None' )
+
+
+def _ToUnicode( value ):
+    if not value:
+        return str()
+    if isinstance( value, str ):
+        return value
+    if isinstance( value, bytes ):
+        # All incoming text should be utf8
+        return str( value, 'utf8' )
+    return str( value )

@@ -24,27 +24,10 @@ function! dyevim#ft#cpp#Setup()
     try
         exec 'call dyevim#ft#cpp#' . g:colors_name . '#Setup()'
     catch
-        call dyevim#colors#CreateBoldVariant( 'NormalBold', 'Normal' )
-        call dyevim#colors#CreateItalicVariant( 'NormalItalic', 'Normal' )
-        call dyevim#colors#CreateBoldVariant( 'TypeBold', 'Type' )
-        call dyevim#colors#CreateBoldVariant( 'FunctionBold', 'Function' )
-        call dyevim#colors#CreateItalicVariant( 'TypeItalic', 'Type' )
-
-        hi link Namespace TypeItalic
-        hi link UserType TypeBold
-        hi link MemberVariable FunctionBold
-        hi link StaticMemberVariable FunctionBold
-        hi link GlobalVariable NormalItalic
-        hi link Variable Normal
-        hi link MemberFunction Function
-        hi link StaticMemberFunction Function
-        hi link DyeFunction Function
-        hi link FunctionParameter NormalBold
-        hi link Enumerator Constant
-        hi link DyeMacro Macro
-        hi link SkippedRange cCppOutSkip
+        call dyevim#ft#cpp#GenericSetup()
     endtry
 
+    call dyevim#colors#CreateBoldVariant( 'ConstantBold', 'Constant' )
     hi link Dye_cpp_Namespace Namespace
     hi link Dye_cpp_Class UserType
     hi link Dye_cpp_Structure UserType
@@ -58,7 +41,7 @@ function! dyevim#ft#cpp#Setup()
     hi link Dye_cpp_StaticMemberFunction StaticMemberFunction
     hi link Dye_cpp_Function DyeFunction
     hi link Dye_cpp_FunctionParameter FunctionParameter
-    hi link Dye_cpp_Enumeration UserType
+    hi link Dye_cpp_Enumeration ConstantBold
     hi link Dye_cpp_Enumerator Enumerator
     hi link Dye_cpp_TemplateParameter UserType
     hi link Dye_cpp_TemplateNonTypeParameter FunctionParameter
@@ -66,4 +49,27 @@ function! dyevim#ft#cpp#Setup()
     hi link Dye_cpp_Macro DyeMacro
     hi link Dye_cpp_SkippedRange SkippedRange
 
+endfunction
+
+
+function! dyevim#ft#cpp#GenericSetup()
+    call dyevim#colors#CreateBoldVariant( 'NormalBold', 'Normal' )
+    call dyevim#colors#CreateItalicVariant( 'NormalItalic', 'Normal' )
+    call dyevim#colors#CreateBoldVariant( 'TypeBold', 'Type' )
+    call dyevim#colors#CreateBoldVariant( 'FunctionBold', 'Function' )
+    call dyevim#colors#CreateItalicVariant( 'TypeItalic', 'Type' )
+
+    hi link Namespace TypeItalic
+    hi link UserType TypeBold
+    hi link MemberVariable FunctionBold
+    hi link StaticMemberVariable FunctionBold
+    hi link GlobalVariable NormalItalic
+    hi link Variable Normal
+    hi link MemberFunction Function
+    hi link StaticMemberFunction Function
+    hi link DyeFunction Function
+    hi link FunctionParameter NormalBold
+    hi link Enumerator Constant
+    hi link DyeMacro Macro
+    hi link SkippedRange cCppOutSkip
 endfunction

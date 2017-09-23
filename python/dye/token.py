@@ -83,7 +83,7 @@ class Token( object ):
 
 
     def __repr__( self ):
-        return "Token {0}".format( self._range )
+        return "Token {0}".format( self._create )
 
 
     def AddMatch( self, wid ):

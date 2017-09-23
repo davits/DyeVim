@@ -5,8 +5,6 @@ DyeVim: C++ semantic highlighting for Vim
 [![codecov](https://codecov.io/gh/davits/DyeVim/branch/master/graph/badge.svg)](https://codecov.io/gh/davits/DyeVim)
 
 
-This plugin brings semantic highlighting into Vim.
-
 Pictures worth a thousand words:
 ![DyeVim Demo](http://i.imgur.com/ASQnHS0.png?1)
 ![DyeVim Demo Token](http://i.imgur.com/kGhMXab.png?1)
@@ -79,9 +77,6 @@ let g:dyevim_timeout = 10
 
 Caveats
 -------
-
-C highlighting is not working yet, but it will be soon
-(need to add coloring scheme).
 
 Since I mainly use gvim in my workflow, there is no terminal support... yet,
 sorry for that.
