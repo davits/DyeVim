@@ -21,18 +21,17 @@
 " SOFTWARE.
 
 function! dyevim#ft#cpp#solarized#Setup()
-    "TODO add terminal support
-    hi Namespace guifg=#c17100 gui=italic
-    hi UserType guifg=#c17100
-    hi MemberVariable guifg=#6c71c4
-    hi StaticMemberVariable guifg=#6c71c4 gui=italic
-    hi GlobalVariable guifg=#93a1a1 gui=italic
-    hi Variable guifg=#93a1a1
-    hi MemberFunction guifg=#268bd2
-    hi StaticMemberFunction guifg=#268bd2 gui=italic
+    hi Namespace guifg=#c17100 gui=italic ctermfg=3 term=italic
+    hi UserType guifg=#c17100 ctermfg=3 term=bold
+    hi MemberVariable guifg=#6c71c4 ctermfg=13
+    hi StaticMemberVariable guifg=#6c71c4 gui=italic ctermfg=13 term=italic
+    hi GlobalVariable guifg=#93a1a1 gui=italic ctermfg=14 term=italic
+    hi Variable guifg=#93a1a1 ctermfg=14
+    hi MemberFunction guifg=#268bd2 ctermfg=4
+    hi StaticMemberFunction guifg=#268bd2 gui=italic ctermfg=4 term=italic
     hi link DyeFunction Function
-    hi FunctionParameter guifg=#93a1a1 gui=bold
+    hi FunctionParameter guifg=#93a1a1 gui=bold ctermfg=14 term=bold
     hi link Enumerator Constant
     hi link DyeMacro Macro
-    hi SkippedRange guifg=#657b83
+    hi SkippedRange guifg=#657b83 ctermfg=11
 endfunction

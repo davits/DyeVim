@@ -23,17 +23,17 @@
 
 function! dyevim#colors#CreateBoldVariant( newGroup, linkedGroup )
     let details = s:GroupDetails( a:linkedGroup )
-    exe printf( 'hi %s %s gui=bold', a:newGroup, details )
+    exe printf( 'hi %s %s gui=bold term=bold', a:newGroup, details )
 endfunction
 
 function! dyevim#colors#CreateItalicVariant( newGroup, linkedGroup )
     let details = s:GroupDetails( a:linkedGroup )
-    exe printf( 'hi %s %s gui=italic', a:newGroup, details )
+    exe printf( 'hi %s %s gui=italic term=italic', a:newGroup, details )
 endfunction
 
 function! dyevim#colors#CreateUnderlinedVariant( newGroup, linkedGroup )
     let details = s:GroupDetails( a:linkedGroup )
-    exe printf( 'hi %s %s gui=underline', a:newGroup, details )
+    exe printf( 'hi %s %s gui=underline term=underline', a:newGroup, details )
 endfunction
 
 function! s:GroupDetails( name )
@@ -43,6 +43,10 @@ function! s:GroupDetails( name )
     exe 'silent hi ' . a:name
     redir END
     let details = substitute( details, "\n", '', 'g' )
+
+    if details =~ 'cleared$'
+        return ''
+    endif
 
     if details !~ 'links to'
         let index = stridx( details, ' xxx ' )
