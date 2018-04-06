@@ -91,9 +91,10 @@ class Buffer( object ):
 
         if not isinstance( skipped_ranges, list ):
             log.debug( "Query Error {0}".format( skipped_ranges ) )
-            if skipped_ranges == 'Timeout':
+            # TODO cover Timeout
+            if skipped_ranges == 'Error':
                 bufName = vimsupport.BufNumberToName( self.number )
-                vimsupport.PostVimWarning( "Skipped range query timeout for "
+                vimsupport.PostVimWarning( "Skipped range query error for "
                                            "buffer {0}".format( bufName ) )
             return
 
@@ -128,9 +129,10 @@ class Buffer( object ):
                                                    self._timeout )
         if not isinstance( token_dicts, list ):
             log.debug( "Query Error {0}".format( token_dicts ) )
-            if token_dicts == 'Timeout':
+            # TODO cover Timeout
+            if token_dicts == 'Error':
                 bufName = vimsupport.BufNumberToName( self.number )
-                vimsupport.PostVimWarning( "Token query timeout for buffer "
+                vimsupport.PostVimWarning( "Token query error for buffer "
                                            "{0} interval {1}"
                                            .format( bufName, interval ) )
             return False
