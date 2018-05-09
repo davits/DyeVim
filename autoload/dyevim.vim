@@ -26,8 +26,8 @@ set cpo&vim
 
 let s:script_folder_path = escape( expand( '<sfile>:p:h' ), '\' )
 let s:current_filetype = ''
-let s:py = has('python') ? "py" : "py3"
-let s:python_eof = has('python') ? "python << EOF" : "python3 << EOF"
+let s:py = has('python3') ? "py3" : "py"
+let s:python_eof = has('python3') ? "python3 << EOF" : "python << EOF"
 
 function! dyevim#Enable()
     if &diff
