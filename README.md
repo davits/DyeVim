@@ -1,9 +1,10 @@
+## The repository is no longer supported, LSP + clangd provide the same functionality in full.
+
 DyeVim: C++ semantic highlighting for Vim
 =========================================
 [![Gitter Room](https://img.shields.io/gitter/room/davits/DyeVim.svg)](https://gitter.im/DyeVim/master)
 [![Build Status](https://travis-ci.org/davits/DyeVim.svg?branch=master)](https://travis-ci.org/davits/DyeVim)
 [![codecov](https://codecov.io/gh/davits/DyeVim/branch/master/graph/badge.svg)](https://codecov.io/gh/davits/DyeVim)
-
 
 Pictures worth a thousand words:
 ![DyeVim Demo](http://i.imgur.com/ASQnHS0.png?1)
